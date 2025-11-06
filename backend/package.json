@@ -1,0 +1,27 @@
+{
+  "name": "riscv-backend",
+  "version": "1.0.0",
+  "description": "RISC-V 管理系统的后端服务",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "express",
+    "sqlite",
+    "api"
+  ],
+  "author": "RISC-V Admin",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.0",
+    "sqlite3": "^5.1.0",
+    "bcrypt": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

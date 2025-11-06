@@ -1,0 +1,27 @@
+{
+  "name": "riscv-frontend",
+  "version": "1.0.0",
+  "description": "基于 Element Plus 的 RISC-V 管理系统前端",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "vue3",
+    "element-plus",
+    "admin"
+  ],
+  "author": "RISC-V Admin",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^3.3.0",
+    "vue-router": "^4.2.0",
+    "element-plus": "^2.3.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.0",
+    "vite": "^4.3.0"
+  }
+}

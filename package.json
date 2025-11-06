@@ -1,0 +1,23 @@
+{
+  "name": "riscv-admin-system",
+  "version": "1.0.0",
+  "description": "基于 Element UI 的 RISC-V 后台管理系统",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "element-ui",
+    "vue3",
+    "admin",
+    "riscv"
+  ],
+  "author": "RISC-V Admin",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
