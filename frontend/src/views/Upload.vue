@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import Layout from '@/components/Layout.vue'
+import Layout from '../components/Layout.vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 
 export default {
@@ -101,7 +101,6 @@ export default {
 
 .card-header {
   font-size: 18px;
-  font-weight: 600;
 }
 
 .upload-demo {

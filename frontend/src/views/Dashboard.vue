@@ -7,7 +7,7 @@
         </div>
       </template>
       <div class="welcome-content">
-        <h3>欢迎使用AI检漏管理系统</h3>
+        <h3>欢迎{{ user.username }}使用AI检漏管理系统</h3>
         <p>您已成功登录系统</p>
         <div class="stats">
           <el-row :gutter="20">

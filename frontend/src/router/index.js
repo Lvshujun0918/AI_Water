@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
+import Records from '../views/Records.vue'
+import Upload from '../views/Upload.vue'
+import UserManagement from '../views/UserManagement.vue'
 
 const routes = [
   {
@@ -18,6 +21,24 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/records',
+    name: 'Records',
+    component: Records,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/upload',
+    name: 'Upload',
+    component: Upload,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/users',
+    name: 'UserManagement',
+    component: UserManagement,
     meta: { requiresAuth: true }
   }
 ]

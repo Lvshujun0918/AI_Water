@@ -3,7 +3,7 @@
     <!-- 侧边栏 -->
     <el-aside :width="isCollapse ? '64px' : '200px'" class="layout-aside">
       <div class="logo">
-        <h2 v-if="!isCollapse">RISC-V 管理</h2>
+        <h2 v-if="!isCollapse">AI检漏管理</h2>
         <h2 v-else>R-V</h2>
       </div>
       <el-menu
