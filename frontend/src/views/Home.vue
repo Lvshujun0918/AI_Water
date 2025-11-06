@@ -1,66 +1,66 @@
 <template>
-  <div class="init-container">
-    <div class="init-box" v-if="!initialized">
-      <h2 class="init-title">系统初始化</h2>
-      <p class="init-description">请设置管理员账户用户名和密码</p>
-      
-      <el-form 
-        ref="initFormRef" 
-        :model="initForm" 
-        :rules="initRules" 
-        class="init-form"
-        @submit.prevent="handleInit"
-      >
-        <el-form-item prop="username">
-          <el-input 
-            v-model="initForm.username" 
-            placeholder="请输入管理员用户名" 
-            prefix-icon="User"
-            size="large"
-          />
-        </el-form-item>
+  <div class="home-container">
+    <div class="init-form" v-if="!initialized">
+      <el-card class="init-card">
+        <template #header>
+          <div class="card-header">
+            <h2>RISC-V 管理系统初始化</h2>
+          </div>
+        </template>
         
-        <el-form-item prop="password">
-          <el-input 
-            v-model="initForm.password" 
-            type="password" 
-            placeholder="请输入管理员密码" 
-            prefix-icon="Lock"
-            size="large"
-            show-password
-          />
-        </el-form-item>
-        
-        <el-form-item prop="confirmPassword">
-          <el-input 
-            v-model="initForm.confirmPassword" 
-            type="password" 
-            placeholder="请确认管理员密码" 
-            prefix-icon="Lock"
-            size="large"
-            show-password
-          />
-        </el-form-item>
-        
-        <el-form-item>
-          <el-button 
-            type="primary" 
-            size="large" 
-            class="init-button"
-            :loading="loading"
-            @click="handleInit"
-          >
-            {{ loading ? '初始化中...' : '初始化系统' }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+        <el-form 
+          :model="initForm" 
+          :rules="initRules" 
+          ref="initFormRef"
+          label-width="100px"
+          v-loading="loading"
+        >
+          <el-form-item label="管理员用户名" prop="username">
+            <el-input 
+              v-model="initForm.username" 
+              placeholder="请输入管理员用户名"
+              minlength="3"
+              maxlength="20"
+            />
+          </el-form-item>
+          
+          <el-form-item label="管理员密码" prop="password">
+            <el-input 
+              v-model="initForm.password" 
+              type="password"
+              placeholder="请输入管理员密码"
+              minlength="6"
+              maxlength="20"
+            />
+          </el-form-item>
+          
+          <el-form-item label="确认密码" prop="confirmPassword">
+            <el-input 
+              v-model="initForm.confirmPassword" 
+              type="password"
+              placeholder="请再次输入密码"
+            />
+          </el-form-item>
+          
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              @click="handleInit" 
+              :loading="loading"
+              style="width: 100%"
+            >
+              初始化系统
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
     </div>
     
     <div class="init-success" v-else>
       <el-result 
         icon="success" 
-        title="系统已初始化" 
-        sub-title="您可以使用管理员账户登录系统"
+        title="系统初始化成功" 
+        subTitle="您可以使用管理员账户登录系统"
       >
         <template #extra>
           <el-button type="primary" @click="$router.push('/login')">前往登录</el-button>
@@ -72,6 +72,7 @@
 
 <script>
 import axios from 'axios'
+import API_CONFIG from '../config/api'
 
 export default {
   name: 'Home',
@@ -96,11 +97,11 @@ export default {
       initRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, message: '用户名长度不能少于3个字符', trigger: 'blur' }
+          { min: 3, message: '用户名至少3个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, message: '密码长度不能少于6个字符', trigger: 'blur' }
+          { min: 6, message: '密码至少6个字符', trigger: 'blur' }
         ],
         confirmPassword: [
           { required: true, message: '请确认密码', trigger: 'blur' },
@@ -109,37 +110,39 @@ export default {
       }
     }
   },
+  
   async mounted() {
-    // 检查系统是否已初始化
-    try {
-      const response = await axios.get('/init-status')
-      if (response.data.success) {
-        this.initialized = response.data.initialized
-      }
-    } catch (error) {
-      this.$message.error('检查初始化状态失败')
-    }
+    await this.checkInitStatus()
   },
+  
   methods: {
+    // 检查系统初始化状态
+    async checkInitStatus() {
+      try {
+        const response = await axios.get(API_CONFIG.ENDPOINTS.INIT_STATUS)
+        this.initialized = response.data.initialized
+      } catch (error) {
+        this.$message.error('检查初始化状态失败')
+      }
+    },
+    
+    // 初始化系统
     handleInit() {
       this.$refs.initFormRef.validate(async (valid) => {
         if (valid) {
           this.loading = true
           
           try {
-            const response = await axios.post('/init-admin', {
-              username: this.initForm.username,
-              password: this.initForm.password
-            })
+            const response = await axios.post(API_CONFIG.ENDPOINTS.INIT_ADMIN, this.initForm)
             
             if (response.data.success) {
-              this.$message.success(response.data.message)
+              this.$message.success('系统初始化成功')
               this.initialized = true
             } else {
-              this.$message.error(response.data.message)
+              this.$message.error(response.data.message || '初始化失败')
             }
           } catch (error) {
-            this.$message.error('初始化失败，请稍后重试')
+            this.$message.error('系统初始化失败')
           } finally {
             this.loading = false
           }
@@ -151,40 +154,32 @@ export default {
 </script>
 
 <style scoped>
-.init-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.home-container {
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
 
-.init-box {
+.init-card {
   width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+
+.card-header {
   text-align: center;
 }
 
-.init-title {
-  margin-bottom: 10px;
+.card-header h2 {
+  margin: 0;
   color: #333;
-  font-size: 24px;
 }
 
-.init-description {
-  margin-bottom: 30px;
-  color: #666;
-}
-
-.init-form {
-  margin-top: 20px;
-}
-
-.init-button {
+.init-success {
   width: 100%;
+  max-width: 500px;
+  text-align: center;
 }
 </style>

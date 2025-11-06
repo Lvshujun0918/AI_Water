@@ -35,7 +35,7 @@
       <div class="upload-history" v-if="audioFiles.length > 0">
         <h3>音频文件列表</h3>
         <el-table :data="audioFiles" style="width: 100%" v-loading="loading">
-          <el-table-column prop="originalName" label="文件名" />
+          <el-table-column prop="original_name" label="文件名" />
           <el-table-column prop="size" label="大小" width="120">
             <template #default="scope">
               {{ formatFileSize(scope.row.size) }}
@@ -68,6 +68,7 @@
 import axios from 'axios'
 import Layout from '../components/Layout.vue'
 import { UploadFilled } from '@element-plus/icons-vue'
+import API_CONFIG from '../config/api'
 
 export default {
   name: 'Upload',
@@ -100,7 +101,7 @@ export default {
       formData.append('userId', this.user.id || '')
       
       try {
-        const response = await axios.post('/upload-audio', formData, {
+        const response = await axios.post(API_CONFIG.ENDPOINTS.UPLOAD_AUDIO, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
@@ -149,7 +150,7 @@ export default {
     async loadAudioFiles() {
       this.loading = true
       try {
-        const response = await axios.get('/audio-files')
+        const response = await axios.get(API_CONFIG.ENDPOINTS.GET_AUDIO_FILES)
         if (response.data.success) {
           this.audioFiles = response.data.files
         }
@@ -163,7 +164,7 @@ export default {
     // 播放音频
     playAudio(file) {
       // 构造完整的音频文件URL
-      const fullUrl = `${axios.defaults.baseURL || ''}${file.url}`
+      const fullUrl = API_CONFIG.getAudioFileUrl(file.filename)
       this.currentAudio = {
         ...file,
         url: fullUrl
@@ -199,7 +200,7 @@ export default {
           type: 'warning'
         })
         
-        const response = await axios.delete(`/audio-files/${file.id}`)
+        const response = await axios.delete(API_CONFIG.ENDPOINTS.DELETE_AUDIO_FILE(file.id))
         if (response.data.success) {
           this.$message.success('删除成功')
           this.loadAudioFiles() // 重新加载文件列表
