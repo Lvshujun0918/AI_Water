@@ -3,9 +3,37 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
-const multer = require('multer');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
+
+// JWT密钥
+const JWT_SECRET = process.env.JWT_SECRET || 'riscv-admin-secret-key';
+
+// JWT认证中间件
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({ 
+      success: false, 
+      message: '访问被拒绝，缺少访问令牌' 
+    });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ 
+        success: false, 
+        message: '令牌无效或已过期' 
+      });
+    }
+    req.user = user;
+    next();
+  });
+};
 
 // 创建 Express 应用
 const app = express();
@@ -196,10 +224,21 @@ app.post('/api/login', (req, res) => {
         });
       }
 
+      // 生成JWT token
+      const token = jwt.sign(
+        { 
+          id: user.id, 
+          username: user.username 
+        }, 
+        JWT_SECRET, 
+        { expiresIn: '24h' }
+      );
+
       // 登录成功
       res.json({
         success: true,
         message: '登录成功',
+        token: token,
         user: {
           id: user.id,
           username: user.username
@@ -255,8 +294,88 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// 上传音频文件接口
-app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
+// 获取用户列表接口 - 需要认证
+app.get('/api/users', authenticateToken, (req, res) => {
+  const query = `SELECT id, username, created_at FROM users ORDER BY id`;
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ 
+        success: false, 
+        message: '服务器内部错误' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: rows,
+      total: rows.length
+    });
+  });
+});
+
+// 获取音频文件列表接口 - 需要认证
+app.get('/api/audio-files', authenticateToken, (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const size = parseInt(req.query.size) || 10;
+  const offset = (page - 1) * size;
+  
+  const query = `SELECT * FROM audio_files ORDER BY id DESC LIMIT ? OFFSET ?`;
+  db.all(query, [size, offset], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ 
+        success: false, 
+        message: '服务器内部错误' 
+      });
+    }
+    
+    // 获取总数
+    const countQuery = `SELECT COUNT(*) as total FROM audio_files`;
+    db.get(countQuery, [], (err, result) => {
+      if (err) {
+        return res.status(500).json({ 
+          success: false, 
+          message: '服务器内部错误' 
+        });
+      }
+      
+      res.json({
+        success: true,
+        data: rows,
+        total: result.total
+      });
+    });
+  });
+});
+
+// 删除音频文件接口 - 需要认证
+app.delete('/api/audio-files/:id', authenticateToken, (req, res) => {
+  const { id } = req.params;
+  
+  const query = `DELETE FROM audio_files WHERE id = ?`;
+  db.run(query, [id], function(err) {
+    if (err) {
+      return res.status(500).json({ 
+        success: false, 
+        message: '服务器内部错误' 
+      });
+    }
+    
+    if (this.changes === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: '文件不存在' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: '删除成功'
+    });
+  });
+});
+
+// 上传音频文件接口 - 需要认证
+app.post('/api/upload-audio', authenticateToken, upload.single('audio'), (req, res) => {
   // 检查是否有文件上传
   if (!req.file) {
     return res.status(400).json({ 
@@ -311,91 +430,13 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
   });
 });
 
-// 获取音频文件列表
-app.get('/api/audio-files', (req, res) => {
-  const query = `
-    SELECT af.*, u.username 
-    FROM audio_files af 
-    LEFT JOIN users u ON af.user_id = u.id 
-    ORDER BY af.upload_time DESC
-  `;
-
-  db.all(query, (err, files) => {
-    if (err) {
-      return res.status(500).json({ 
-        success: false, 
-        message: '获取音频文件列表失败' 
-      });
-    }
-
-    // 为每个文件添加访问URL
-    const filesWithUrl = files.map(file => ({
-      ...file,
-      url: `/uploads/${file.filename}`
-    }));
-
-    res.json({
-      success: true,
-      files: filesWithUrl
-    });
+// 测试接口 - 需要认证
+app.get('/api/test', authenticateToken, (req, res) => {
+  res.json({ 
+    success: true, 
+    message: '认证成功！', 
+    user: req.user 
   });
-});
-
-// 删除音频文件
-app.delete('/api/audio-files/:id', (req, res) => {
-  const fileId = req.params.id;
-
-  // 先查询文件信息
-  const selectQuery = `SELECT filename FROM audio_files WHERE id = ?`;
-  db.get(selectQuery, [fileId], (err, file) => {
-    if (err) {
-      return res.status(500).json({ 
-        success: false, 
-        message: '删除文件失败' 
-      });
-    }
-
-    if (!file) {
-      return res.status(404).json({ 
-        success: false, 
-        message: '文件不存在' 
-      });
-    }
-
-    // 从数据库中删除记录
-    const deleteQuery = `DELETE FROM audio_files WHERE id = ?`;
-    db.run(deleteQuery, [fileId], function(err) {
-      if (err) {
-        return res.status(500).json({ 
-          success: false, 
-          message: '删除文件失败' 
-        });
-      }
-
-      if (this.changes === 0) {
-        return res.status(404).json({ 
-          success: false, 
-          message: '文件不存在' 
-        });
-      }
-
-      // 从文件系统中删除文件
-      const filePath = path.join(uploadDir, file.filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-
-      res.json({
-        success: true,
-        message: '文件删除成功'
-      });
-    });
-  });
-});
-
-// 测试接口
-app.get('/api/test', (req, res) => {
-  res.json({ message: '后端服务正常运行' });
 });
 
 // 错误处理中间件

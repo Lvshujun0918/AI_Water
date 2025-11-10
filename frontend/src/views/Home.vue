@@ -100,8 +100,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import API_CONFIG from '../config/api'
+import { apiClient } from '../config/api'
 import { User, Lock } from '@element-plus/icons-vue'
 
 export default {
@@ -155,7 +154,7 @@ export default {
     // 检查系统初始化状态
     async checkInitStatus() {
       try {
-        const response = await axios.get(API_CONFIG.ENDPOINTS.INIT_STATUS)
+        const response = await apiClient.get('/init-status')
         this.initialized = response.data.initialized
       } catch (error) {
         this.$message.error('检查初始化状态失败')
@@ -169,7 +168,7 @@ export default {
           this.loading = true
           
           try {
-            const response = await axios.post(API_CONFIG.ENDPOINTS.INIT_ADMIN, this.initForm)
+            const response = await apiClient.post('/init-admin', this.initForm)
             
             if (response.data.success) {
               this.$message.success('系统初始化成功')

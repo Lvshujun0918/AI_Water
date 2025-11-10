@@ -74,8 +74,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import API_CONFIG from '../config/api'
+import { apiClient } from '../config/api'
 import { User, Lock } from '@element-plus/icons-vue'
 
 export default {
@@ -113,11 +112,11 @@ export default {
           this.loading = true
           
           try {
-            const response = await axios.post(API_CONFIG.ENDPOINTS.LOGIN, this.loginForm)
+            const response = await apiClient.post('/login', this.loginForm)
             
             if (response.data.success) {
-              // 保存登录状态和用户信息
-              localStorage.setItem('isLoggedIn', 'true')
+              // 保存JWT token和用户信息
+              localStorage.setItem('token', response.data.token)
               localStorage.setItem('user', JSON.stringify(response.data.user))
               
               // 跳转到仪表板
