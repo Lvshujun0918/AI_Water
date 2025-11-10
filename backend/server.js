@@ -399,8 +399,8 @@ app.post('/api/upload-audio', authenticateToken, upload.single('audio'), (req, r
     req.file.mimetype,
     req.file.size,
     userId,
-    '未知',
-    0.0
+    '高风险',
+    0.9
   ];
 
   db.run(insertQuery, params, function(err) {
