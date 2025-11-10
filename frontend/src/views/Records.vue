@@ -8,61 +8,46 @@
             <el-button type="primary" @click="goToUpload">上传新文件</el-button>
           </div>
         </template>
-        
-        <el-table 
-          :data="records" 
-          v-loading="loading"
-          element-loading-text="加载中..."
-          style="width: 100%"
-        >
+
+        <el-table :data="records" v-loading="loading" element-loading-text="加载中..." style="width: 100%">
           <el-table-column prop="id" label="ID" width="80" />
           <el-table-column prop="filename" label="文件名" />
           <el-table-column prop="upload_time" label="上传时间" width="200" />
+          <el-table-column prop="size" label="大小" />
+          <el-table-column label="风险等级" width="120">
+            <template #default="scope">
+              <el-tag :type="getConfidenceStatus(scope.row.risk_level)"  disable-transitions>
+                {{ scope.row.risk_level }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="置信度" width="100">
+            <template #default="scope">
+              <el-progress :percentage="Math.round(scope.row.confidence * 100)"/>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="200">
             <template #default="scope">
-              <el-button 
-                size="small" 
-                type="primary"
-                @click="playAudio(scope.row)"
-              >
+              <el-button size="small" type="primary" @click="playAudio(scope.row)">
                 播放
               </el-button>
-              <el-button 
-                size="small" 
-                type="danger"
-                @click="deleteAudio(scope.row)"
-              >
+              <el-button size="small" type="danger" @click="deleteAudio(scope.row)">
                 删除
               </el-button>
             </template>
           </el-table-column>
         </el-table>
-        
+
         <div class="pagination-container">
-          <el-pagination
-            v-model:current-page="currentPage"
-            v-model:page-size="pageSize"
-            :page-sizes="[10, 20, 50]"
-            :total="total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+          <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
+            :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" />
         </div>
       </el-card>
-      
+
       <!-- 音频播放对话框 -->
-      <el-dialog
-        v-model="dialogVisible"
-        :title="currentAudio.filename"
-        width="400px"
-      >
-        <audio 
-          v-if="dialogVisible" 
-          :src="audioUrl" 
-          controls 
-          style="width: 100%"
-        />
+      <el-dialog v-model="dialogVisible" :title="currentAudio.filename" width="400px">
+        <audio v-if="dialogVisible" :src="audioUrl" controls style="width: 100%" />
       </el-dialog>
     </div>
   </Layout>
@@ -90,23 +75,36 @@ export default {
       total: 0
     }
   },
-  
+
   async mounted() {
     // 获取用户信息
     const userStr = localStorage.getItem('user')
     if (userStr) {
       this.user = JSON.parse(userStr)
     }
-    
+
     // 获取记录
     await this.fetchRecords()
   },
-  
-  methods: {
+
+  methods: {   
+    // 获取置信度状态
+    getConfidenceStatus(riskLevel) {
+      switch (riskLevel) {
+        case '高风险':
+          return 'danger'
+        case '中风险':
+          return 'warning'
+        case '低风险':
+          return 'success'
+        default:
+          return null
+      }
+    },
     goToUpload() {
       this.$router.push('/upload')
     },
-    
+
     async fetchRecords() {
       this.loading = true
       try {
@@ -114,6 +112,7 @@ export default {
         if (response.data.success) {
           this.records = response.data.data
           this.total = response.data.total
+          this.risk_level = response.data.risk_level
         }
       } catch (error) {
         this.$message.error('获取记录失败')
@@ -121,13 +120,13 @@ export default {
         this.loading = false
       }
     },
-    
+
     playAudio(row) {
       this.currentAudio = row
       this.audioUrl = API_CONFIG.getAudioFileUrl(row.filename)
       this.dialogVisible = true
     },
-    
+
     deleteAudio(row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -145,13 +144,13 @@ export default {
         this.$message.info('已取消删除')
       })
     },
-    
+
     handleSizeChange(val) {
       this.pageSize = val
       this.currentPage = 1
       this.fetchRecords()
     },
-    
+
     handleCurrentChange(val) {
       this.currentPage = val
       this.fetchRecords()
