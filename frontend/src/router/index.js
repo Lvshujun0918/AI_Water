@@ -55,11 +55,11 @@ router.beforeEach((to, from, next) => {
     return next()
   }
   
-  const isAuthenticated = localStorage.getItem('isLoggedIn')
+  const token = localStorage.getItem('token')
   
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  if (to.meta.requiresAuth && !token) {
     next('/login')
-  } else if (to.path === '/login' && isAuthenticated) {
+  } else if (to.path === '/login' && token) {
     next('/dashboard')
   } else {
     next()

@@ -1,89 +1,87 @@
 <template>
   <Layout :user="user">
-    <el-card class="welcome-card">
-      <template #header>
-        <div class="card-header">
-          <span>系统首页</span>
+    <div class="dashboard-container">
+      <el-card class="welcome-card">
+        <template #header>
+          <div class="card-header">
+            <h2>系统概览</h2>
+          </div>
+        </template>
+        
+        <div class="welcome-content">
+          <h3>欢迎, {{ user.username }}!</h3>
+          <p>您已成功登录 RISC-V 管理系统</p>
         </div>
-      </template>
-      <div class="welcome-content">
-        <h3>欢迎{{ user.username }}使用AI检漏管理系统</h3>
-        <p>您已成功登录系统</p>
-        <div class="stats">
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <div class="stat-item">
-                <el-icon class="stat-icon"><User /></el-icon>
-                <div class="stat-info">
-                  <div class="stat-number">1</div>
-                  <div class="stat-text">用户总数</div>
-                </div>
+        
+        <div class="stats-grid">
+          <el-card class="stat-card">
+            <div class="stat-content">
+              <el-icon class="stat-icon" color="#409eff"><Document /></el-icon>
+              <div class="stat-info">
+                <div class="stat-number">{{ stats.audioFiles }}</div>
+                <div class="stat-label">音频文件</div>
               </div>
-            </el-col>
-            <el-col :span="6">
-              <div class="stat-item">
-                <el-icon class="stat-icon"><Document /></el-icon>
-                <div class="stat-info">
-                  <div class="stat-number">0</div>
-                  <div class="stat-text">记录总数</div>
-                </div>
+            </div>
+          </el-card>
+          
+          <el-card class="stat-card">
+            <div class="stat-content">
+              <el-icon class="stat-icon" color="#67c23a"><User /></el-icon>
+              <div class="stat-info">
+                <div class="stat-number">{{ stats.users }}</div>
+                <div class="stat-label">用户数</div>
               </div>
-            </el-col>
-            <el-col :span="6">
-              <div class="stat-item">
-                <el-icon class="stat-icon"><Upload /></el-icon>
-                <div class="stat-info">
-                  <div class="stat-number">0</div>
-                  <div class="stat-text">上传文件</div>
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="6">
-              <div class="stat-item">
-                <el-icon class="stat-icon"><DataLine /></el-icon>
-                <div class="stat-info">
-                  <div class="stat-number">0</div>
-                  <div class="stat-text">数据统计</div>
-                </div>
-              </div>
-            </el-col>
-          </el-row>
+            </div>
+          </el-card>
         </div>
-      </div>
-    </el-card>
+      </el-card>
+    </div>
   </Layout>
 </template>
 
 <script>
-import axios from 'axios'
 import Layout from '../components/Layout.vue'
-import { User, Document, Upload, DataLine } from '@element-plus/icons-vue'
+import { Document, User } from '@element-plus/icons-vue'
+import { apiClient } from '../config/api'
 
 export default {
   name: 'Dashboard',
   components: {
     Layout,
-    User,
     Document,
-    Upload,
-    DataLine
+    User
   },
   data() {
     return {
-      user: {}
+      user: {},
+      stats: {
+        audioFiles: 0,
+        users: 1
+      }
     }
   },
+  
   async mounted() {
+    // 获取用户信息
     const userStr = localStorage.getItem('user')
     if (userStr) {
       this.user = JSON.parse(userStr)
-    } else {
-      // 检查用户是否真的已登录
+    }
+    
+    // 获取统计信息
+    await this.fetchStats()
+  },
+  
+  methods: {
+    async fetchStats() {
       try {
-        await axios.get('/test')
+        // 获取音频文件统计
+        const response = await apiClient.get('/audio-files')
+        if (response.data.success) {
+          this.stats.audioFiles = response.data.data.length
+        }
       } catch (error) {
-        // 如果无法访问受保护的资源，重定向到登录页
-        this.$router.push('/login')
+        console.error('获取统计信息失败:', error)
       }
     }
   }
@@ -91,67 +89,70 @@ export default {
 </script>
 
 <style scoped>
+.dashboard-container {
+  padding: 20px;
+}
+
 .welcome-card {
-  max-width: 1200px;
-  margin: 0 auto;
+  margin-bottom: 20px;
 }
 
 .card-header {
-  font-size: 18px;
-  font-weight: 600;
+  text-align: center;
 }
 
 .welcome-content {
   text-align: center;
-  padding: 20px;
+  margin-bottom: 30px;
 }
 
 .welcome-content h3 {
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
+  font-size: 24px;
   color: #333;
 }
 
 .welcome-content p {
+  margin: 0;
   color: #666;
-  margin-bottom: 30px;
+  font-size: 16px;
 }
 
-.stats {
-  margin-top: 30px;
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
 
-.stat-item {
+.stat-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.stat-content {
   display: flex;
   align-items: center;
   padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  transition: all 0.3s;
-}
-
-.stat-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
-  font-size: 32px;
-  color: #409eff;
-  margin-right: 15px;
+  font-size: 40px;
+  margin-right: 20px;
 }
 
 .stat-info {
-  text-align: left;
+  flex: 1;
 }
 
 .stat-number {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  color: #333;
+  margin-bottom: 5px;
 }
 
-.stat-text {
-  font-size: 14px;
+.stat-label {
+  font-size: 16px;
   color: #666;
 }
 </style>

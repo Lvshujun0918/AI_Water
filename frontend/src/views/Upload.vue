@@ -1,45 +1,72 @@
 <template>
   <Layout :user="user">
-    <el-card class="upload-card">
-      <template #header>
-        <div class="card-header">
-          <span>音频文件上传</span>
-        </div>
-      </template>
-      
-      <div class="upload-area">
-        <el-upload
-          class="upload-demo"
-          drag
-          :http-request="handleUpload"
-          :multiple="false"
-          :on-success="handleSuccess"
-          :on-error="handleError"
-          :on-progress="handleProgress"
-          :on-remove="handleRemove"
-          :file-list="fileList"
-          accept="audio/*"
-        >
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">
-            将音频文件拖到此处，或<em>点击上传</em>
+    <div class="upload-container">
+      <el-card class="upload-card">
+        <template #header>
+          <div class="card-header">
+            <h2>上传音频文件</h2>
           </div>
-          <template #tip>
-            <div class="el-upload__tip">
-              请上传音频文件，支持 mp3, wav, ogg 等格式，文件大小不超过50MB
-            </div>
-          </template>
-        </el-upload>
-      </div>
-    </el-card>
+        </template>
+        
+        <el-form 
+          :model="uploadForm" 
+          :rules="uploadRules" 
+          ref="uploadFormRef"
+          label-width="120px"
+          v-loading="uploading"
+          element-loading-text="上传中..."
+        >
+          <el-form-item label="选择音频文件" prop="audioFile">
+            <el-upload
+              class="upload-demo"
+              drag
+              :auto-upload="false"
+              :on-change="handleFileChange"
+              :on-remove="handleFileRemove"
+              :limit="1"
+              accept="audio/*"
+            >
+              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <div class="el-upload__text">
+                将文件拖到此处，或<em>点击上传</em>
+              </div>
+              <template #tip>
+                <div class="el-upload__tip">
+                  请上传音频文件，且不超过10MB
+                </div>
+              </template>
+            </el-upload>
+          </el-form-item>
+          
+          <el-form-item label="备注信息" prop="remark">
+            <el-input 
+              v-model="uploadForm.remark" 
+              type="textarea"
+              placeholder="请输入备注信息（可选）"
+              :rows="3"
+            />
+          </el-form-item>
+          
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              @click="submitUpload"
+              :disabled="!uploadForm.audioFile || uploading"
+            >
+              {{ uploading ? '上传中...' : '提交上传' }}
+            </el-button>
+            <el-button @click="resetForm">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </div>
   </Layout>
 </template>
 
 <script>
-import axios from 'axios'
 import Layout from '../components/Layout.vue'
 import { UploadFilled } from '@element-plus/icons-vue'
-import API_CONFIG from '../config/api'
+import { apiClient } from '../config/api'
 
 export default {
   name: 'Upload',
@@ -50,82 +77,85 @@ export default {
   data() {
     return {
       user: {},
-      fileList: []
+      uploadForm: {
+        audioFile: null,
+        remark: ''
+      },
+      uploadRules: {
+        audioFile: [
+          { required: true, message: '请选择音频文件', trigger: 'change' }
+        ]
+      },
+      uploading: false
     }
   },
+  
   mounted() {
+    // 获取用户信息
     const userStr = localStorage.getItem('user')
     if (userStr) {
       this.user = JSON.parse(userStr)
     }
   },
+  
   methods: {
-    // 自定义上传处理函数
-    async handleUpload(options) {
-      const { file } = options
-      const formData = new FormData()
-      formData.append('audio', file)
-      formData.append('userId', this.user.id || '')
-      
-      try {
-        const response = await axios.post(API_CONFIG.ENDPOINTS.UPLOAD_AUDIO, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress: (progressEvent) => {
-            // 更新上传进度
-            const progress = (progressEvent.loaded / progressEvent.total) * 100
-            options.onProgress({ percent: progress })
+    handleFileChange(file) {
+      this.uploadForm.audioFile = file.raw
+    },
+    
+    handleFileRemove() {
+      this.uploadForm.audioFile = null
+    },
+    
+    resetForm() {
+      this.$refs.uploadFormRef.resetFields()
+      this.uploadForm.remark = ''
+    },
+    
+    submitUpload() {
+      this.$refs.uploadFormRef.validate(async (valid) => {
+        if (valid) {
+          this.uploading = true
+          
+          try {
+            const formData = new FormData()
+            formData.append('audio', this.uploadForm.audioFile)
+            formData.append('remark', this.uploadForm.remark)
+            
+            const response = await apiClient.post('/upload-audio', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+            
+            if (response.data.success) {
+              this.$message.success('上传成功')
+              this.resetForm()
+            } else {
+              this.$message.error(response.data.message || '上传失败')
+            }
+          } catch (error) {
+            this.$message.error('上传失败')
+          } finally {
+            this.uploading = false
           }
-        })
-        
-        // 上传成功
-        options.onSuccess(response.data)
-        return response
-      } catch (error) {
-        // 上传失败
-        options.onError(error)
-        throw error
-      }
-    },
-    
-    handleSuccess(response, file, fileList) {
-      if (response.success) {
-        this.$message.success('上传成功')
-        this.fileList = fileList
-      } else {
-        this.$message.error(response.message || '上传失败')
-        this.fileList = fileList.filter(f => f.uid !== file.uid)
-      }
-    },
-    
-    handleError(error, file, fileList) {
-      this.$message.error('上传失败: ' + (error.message || '未知错误'))
-      this.fileList = fileList.filter(f => f.uid !== file.uid)
-    },
-    
-    handleProgress(event, file, fileList) {
-      // 上传进度处理
-    },
-    
-    handleRemove(file, fileList) {
-      this.fileList = fileList
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-.upload-card {
-  margin: 20px;
+.upload-container {
+  padding: 20px;
 }
 
 .card-header {
-  font-size: 18px;
-  font-weight: 600;
+  text-align: center;
 }
 
-.upload-area {
-  margin-bottom: 30px;
+.upload-demo {
+  width: 100%;
 }
 </style>
