@@ -79,6 +79,8 @@ db.run(`CREATE TABLE IF NOT EXISTS audio_files (
   size INTEGER NOT NULL,
   upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER,
+  risk_level TEXT DEFAULT '未知',
+  confidence REAL DEFAULT 0.0,
   FOREIGN KEY (user_id) REFERENCES users (id)
 )`);
 
@@ -268,15 +270,18 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
 
   // 保存文件信息到数据库
   const insertQuery = `INSERT INTO audio_files 
-    (filename, original_name, mimetype, size, user_id) 
-    VALUES (?, ?, ?, ?, ?)`;
+    (filename, original_name, mimetype, size, user_id, risk_level, confidence) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
   
+  // 默认风险等级为"未知"，置信度为0.0
   const params = [
     req.file.filename,
     req.file.originalname,
     req.file.mimetype,
     req.file.size,
-    userId
+    userId,
+    '未知',
+    0.0
   ];
 
   db.run(insertQuery, params, function(err) {
@@ -298,6 +303,8 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
         originalName: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
+        risk_level: '未知',
+        confidence: 0.0,
         url: `/uploads/${req.file.filename}`
       }
     });
