@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { PythonShell } = require('python-shell');
 
 // JWT密钥
 const JWT_SECRET = process.env.JWT_SECRET || 'riscv-admin-secret-key';
@@ -373,6 +374,71 @@ app.delete('/api/audio-files/:id', authenticateToken, (req, res) => {
     });
   });
 });
+
+// 使用Python模型处理单个音频文件
+function processAudioFile(audioFile) {
+  return new Promise((resolve, reject) => {
+    const filePath = path.join(__dirname, 'uploads', audioFile.filename);
+    const modelPath = path.join(__dirname, 'module', 'model.pth');
+    
+    // 检查文件是否存在
+    if (!fs.existsSync(filePath)) {
+      console.error('音频文件不存在:', filePath);
+      return reject(new Error('音频文件不存在'));
+    }
+
+    // 配置PythonShell选项
+    const options = {
+      mode: 'text',
+      pythonPath: 'python',
+      pythonOptions: ['-u'],
+      scriptPath: path.join(__dirname, 'module'),
+      args: [filePath, modelPath]
+    };
+
+    // 调用Python脚本进行预测
+    PythonShell.run('predict.py', options, (err, results) => {
+      if (err) {
+        console.error('Python脚本执行出错:', err);
+        return reject(err);
+      }
+
+      try {
+        // 解析Python脚本返回的JSON结果
+        const prediction = JSON.parse(results[0]);
+        
+        if (prediction.error) {
+          console.error('预测出错:', prediction.error);
+          return reject(new Error(prediction.error));
+        }
+
+        // 更新数据库中的预测结果
+        const updateQuery = `
+          UPDATE audio_files 
+          SET risk_level = ?, confidence = ? 
+          WHERE id = ?
+        `;
+        
+        db.run(updateQuery, [
+          prediction.risk_level, 
+          prediction.confidence, 
+          audioFile.id
+        ], function(err) {
+          if (err) {
+            console.error('更新数据库失败:', err);
+            return reject(err);
+          }
+          
+          console.log(`音频文件 ${audioFile.filename} 处理完成:`, prediction);
+          resolve(prediction);
+        });
+      } catch (parseError) {
+        console.error('解析预测结果失败:', parseError);
+        reject(parseError);
+      }
+    });
+  });
+}
 
 // 上传音频文件接口 - 需要认证
 app.post('/api/upload-audio', authenticateToken, upload.single('audio'), (req, res) => {
