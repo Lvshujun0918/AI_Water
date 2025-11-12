@@ -10,7 +10,7 @@
         
         <div class="welcome-content">
           <h3>欢迎, {{ user.username }}!</h3>
-          <p>您已成功登录 RISC-V 管理系统</p>
+          <p>您已成功登录AI检漏管理系统</p>
         </div>
         
         <div class="stats-grid">
