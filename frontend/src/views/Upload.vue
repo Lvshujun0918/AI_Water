@@ -59,15 +59,43 @@
           </el-form-item>
         </el-form>
         
-        <el-alert
-          v-if="uploadSuccess"
-          title="上传成功"
-          type="success"
-          description="文件已成功上传，系统将自动进行风险分析，请稍后在记录管理中查看分析结果。"
-          show-icon
-          closable
-          style="margin-top: 20px;"
-        />
+        <!-- 上传成功后的处理进度显示 -->
+        <div v-if="uploadedFile" class="processing-status">
+          <el-alert
+            v-if="processingStatus.status === 'completed'"
+            title="处理完成"
+            type="success"
+            description="音频文件已成功处理，可以到记录管理页面查看详情。"
+            show-icon
+            closable
+            style="margin-top: 20px;"
+          />
+          
+          <el-card v-else class="status-card">
+            <div class="status-header">
+              <h3>文件处理中</h3>
+            </div>
+            
+            <div class="status-content">
+              <el-progress 
+                :percentage="processingStatus.progress" 
+                :status="processingStatus.status === 'error' ? 'exception' : ''"
+              />
+              <p class="status-message">{{ processingStatus.message }}</p>
+              
+              <div v-if="processingStatus.status === 'error'" class="error-info">
+                <el-alert
+                  :title="processingStatus.message"
+                  type="error"
+                  show-icon
+                />
+                <el-button @click="retryProcessing" type="primary" size="small" style="margin-top: 10px;">
+                  重试处理
+                </el-button>
+              </div>
+            </div>
+          </el-card>
+        </div>
       </el-card>
     </div>
   </Layout>
@@ -97,7 +125,13 @@ export default {
         ]
       },
       uploading: false,
-      uploadSuccess: false
+      uploadedFile: null,
+      processingStatus: {
+        status: 'idle', // idle, processing, completed, error
+        progress: 0,
+        message: ''
+      },
+      statusCheckInterval: null
     }
   },
   
@@ -106,6 +140,13 @@ export default {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       this.user = JSON.parse(userStr)
+    }
+  },
+  
+  beforeUnmount() {
+    // 清理定时器
+    if (this.statusCheckInterval) {
+      clearInterval(this.statusCheckInterval)
     }
   },
   
@@ -121,14 +162,23 @@ export default {
     resetForm() {
       this.$refs.uploadFormRef.resetFields()
       this.uploadForm.remark = ''
-      this.uploadSuccess = false
+      this.uploadedFile = null
+      this.processingStatus = {
+        status: 'idle',
+        progress: 0,
+        message: ''
+      }
+      
+      // 清理定时器
+      if (this.statusCheckInterval) {
+        clearInterval(this.statusCheckInterval)
+      }
     },
     
-    submitUpload() {
+    async submitUpload() {
       this.$refs.uploadFormRef.validate(async (valid) => {
         if (valid) {
           this.uploading = true
-          this.uploadSuccess = false
           
           try {
             const formData = new FormData()
@@ -143,8 +193,10 @@ export default {
             
             if (response.data.success) {
               this.$message.success('上传成功')
-              this.uploadSuccess = true
-              this.resetForm()
+              this.uploadedFile = response.data.file
+              
+              // 开始检查处理状态
+              this.startStatusCheck(response.data.file.filename)
             } else {
               this.$message.error(response.data.message || '上传失败')
             }
@@ -155,6 +207,50 @@ export default {
           }
         }
       })
+    },
+    
+    async checkProcessingStatus(fileId) {
+      try {
+        const response = await apiClient.get(`/audio-processing-status/${fileId}`)
+        if (response.data.success) {
+          this.processingStatus = response.data.data
+          
+          // 如果处理完成或出错，停止检查
+          if (response.data.data.status === 'completed' || response.data.data.status === 'error') {
+            if (this.statusCheckInterval) {
+              clearInterval(this.statusCheckInterval)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('获取处理状态失败:', error)
+        this.processingStatus = {
+          status: 'error',
+          progress: 0,
+          message: '获取处理状态失败'
+        }
+      }
+    },
+    
+    startStatusCheck(fileId) {
+      // 立即检查一次
+      this.checkProcessingStatus(fileId)
+      
+      // 每3秒检查一次处理状态
+      this.statusCheckInterval = setInterval(() => {
+        this.checkProcessingStatus(fileId)
+      }, 3000)
+    },
+    
+    retryProcessing() {
+      if (this.uploadedFile && this.uploadedFile.id) {
+        this.processingStatus = {
+          status: 'processing',
+          progress: 0,
+          message: '重新开始处理'
+        }
+        this.startStatusCheck(this.uploadedFile.id)
+      }
     }
   }
 }
@@ -171,5 +267,33 @@ export default {
 
 .upload-demo {
   width: 100%;
+}
+
+.processing-status {
+  margin-top: 20px;
+}
+
+.status-card {
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+}
+
+.status-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.status-content {
+  text-align: center;
+}
+
+.status-message {
+  margin: 15px 0;
+  font-size: 14px;
+  color: #606266;
+}
+
+.error-info {
+  margin-top: 15px;
 }
 </style>
