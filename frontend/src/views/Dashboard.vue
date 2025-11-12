@@ -35,6 +35,19 @@
           </el-card>
         </div>
       </el-card>
+      
+      <!-- 音频上传趋势图表 -->
+      <el-card class="chart-card">
+        <template #header>
+          <div class="card-header">
+            <h2>音频上传趋势</h2>
+          </div>
+        </template>
+        
+        <div class="chart-container" v-loading="chartLoading">
+          <v-chart class="chart" :option="chartOption" autoresize />
+        </div>
+      </el-card>
     </div>
   </Layout>
 </template>
@@ -42,14 +55,34 @@
 <script>
 import Layout from '../components/Layout.vue'
 import { Document, User } from '@element-plus/icons-vue'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart } from 'echarts/charts'
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+} from 'echarts/components'
+import VChart from 'vue-echarts'
 import { apiClient } from '../config/api'
+
+use([
+  CanvasRenderer,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+])
 
 export default {
   name: 'Dashboard',
   components: {
     Layout,
     Document,
-    User
+    User,
+    VChart
   },
   data() {
     return {
@@ -57,6 +90,36 @@ export default {
       stats: {
         audioFiles: 0,
         users: 1
+      },
+      chartLoading: false,
+      chartOption: {
+        title: {
+          text: '最近7天音频上传数量',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          data: []
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [],
+            type: 'line',
+            smooth: true,
+            areaStyle: {
+              color: '#409eff'
+            },
+            itemStyle: {
+              color: '#409eff'
+            }
+          }
+        ]
       }
     }
   },
@@ -70,6 +133,9 @@ export default {
     
     // 获取统计信息
     await this.fetchStats()
+    
+    // 获取图表数据
+    await this.fetchChartData()
   },
   
   methods: {
@@ -82,6 +148,64 @@ export default {
         }
       } catch (error) {
         console.error('获取统计信息失败:', error)
+      }
+    },
+    
+    async fetchChartData() {
+      this.chartLoading = true
+      try {
+        // 获取所有音频文件数据
+        const response = await apiClient.get('/audio-files')
+        if (response.data.success) {
+          // 处理数据，按日期统计
+          const dailyData = this.processDailyData(response.data.data)
+          
+          // 更新图表数据
+          this.chartOption.xAxis.data = dailyData.dates
+          this.chartOption.series[0].data = dailyData.counts
+        }
+      } catch (error) {
+        console.error('获取图表数据失败:', error)
+        this.$message.error('获取图表数据失败')
+      } finally {
+        this.chartLoading = false
+      }
+    },
+    
+    processDailyData(audioFiles) {
+      // 创建一个映射来存储每天的文件数量
+      const dateMap = new Map()
+      
+      // 获取最近7天的日期
+      const dates = []
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        const dateStr = `${month}-${day}`
+        dates.push(dateStr)
+        dateMap.set(dateStr, 0)
+      }
+      
+      // 统计每天的文件数量
+      audioFiles.forEach(file => {
+        // 从 upload_time 提取日期部分
+        const uploadDate = file.upload_time.split(' ')[0]
+        const [year, month, day] = uploadDate.split('-')
+        const dateStr = `${month}-${day}`
+        
+        if (dateMap.has(dateStr)) {
+          dateMap.set(dateStr, dateMap.get(dateStr) + 1)
+        }
+      })
+      
+      // 转换为数组
+      const counts = dates.map(date => dateMap.get(date))
+      
+      return {
+        dates,
+        counts
       }
     }
   }
@@ -154,5 +278,19 @@ export default {
 .stat-label {
   font-size: 16px;
   color: #666;
+}
+
+.chart-card {
+  margin-top: 20px;
+}
+
+.chart-container {
+  height: 400px;
+  padding: 20px 0;
+}
+
+.chart {
+  height: 100%;
+  width: 100%;
 }
 </style>
