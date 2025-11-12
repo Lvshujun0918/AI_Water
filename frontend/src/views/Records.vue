@@ -11,21 +11,23 @@
 
         <el-table :data="records" v-loading="loading" element-loading-text="加载中..." style="width: 100%">
           <el-table-column prop="id" label="ID" width="80" />
-          <el-table-column prop="filename" label="文件名" />
-          <el-table-column prop="upload_time" label="上传时间" width="200" />
-          <el-table-column prop="size" label="大小" />
-          <el-table-column label="风险等级" width="120">
+          <el-table-column prop="original_name" label="文件名" />
+          <el-table-column prop="risk_level" label="风险等级" width="120">
             <template #default="scope">
-              <el-tag :type="getConfidenceStatus(scope.row.risk_level)"  disable-transitions>
-                {{ scope.row.risk_level }}
+              <el-tag :type="getRiskLevelType(scope.row.risk_level)">
+                {{ scope.row.risk_level || '未知' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="置信度" width="100">
+          <el-table-column prop="confidence" label="置信度" width="100">
             <template #default="scope">
-              <el-progress :percentage="Math.round(scope.row.confidence * 100)"/>
+              <span v-if="scope.row.confidence > 0">
+                {{ (scope.row.confidence * 100).toFixed(2) }}%
+              </span>
+              <span v-else>未知</span>
             </template>
           </el-table-column>
+          <el-table-column prop="upload_time" label="上传时间" width="200" />
           <el-table-column label="操作" width="200">
             <template #default="scope">
               <el-button size="small" type="primary" @click="playAudio(scope.row)">
@@ -46,8 +48,33 @@
       </el-card>
 
       <!-- 音频播放对话框 -->
-      <el-dialog v-model="dialogVisible" :title="currentAudio.filename" width="400px">
-        <audio v-if="dialogVisible" :src="audioUrl" controls style="width: 100%" />
+      <el-dialog
+        v-model="dialogVisible"
+        :title="currentAudio.original_name"
+        width="400px"
+      >
+        <audio 
+          v-if="dialogVisible" 
+          :src="audioUrl" 
+          controls 
+          style="width: 100%"
+        />
+        
+        <div v-if="currentAudio.risk_level || currentAudio.confidence" class="audio-info">
+          <el-descriptions :column="1" size="small" border>
+            <el-descriptions-item label="风险等级">
+              <el-tag :type="getRiskLevelType(currentAudio.risk_level)">
+                {{ currentAudio.risk_level || '未知' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="置信度">
+              <span v-if="currentAudio.confidence > 0">
+                {{ (currentAudio.confidence * 100).toFixed(2) }}%
+              </span>
+              <span v-else>未知</span>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
       </el-dialog>
     </div>
   </Layout>
@@ -88,18 +115,11 @@ export default {
   },
 
   methods: {   
-    // 获取置信度状态
-    getConfidenceStatus(riskLevel) {
-      switch (riskLevel) {
-        case '高风险':
-          return 'danger'
-        case '中风险':
-          return 'warning'
-        case '低风险':
-          return 'success'
-        default:
-          return null
-      }
+    getRiskLevelType(riskLevel) {
+      if (!riskLevel || riskLevel === '未知') return '';
+      if (riskLevel === '低风险') return 'success';
+      if (riskLevel === '高风险') return 'danger';
+      return 'warning';
     },
     goToUpload() {
       this.$router.push('/upload')
@@ -174,5 +194,9 @@ export default {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+.audio-info {
+  margin-top: 20px;
 }
 </style>

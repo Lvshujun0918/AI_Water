@@ -9,11 +9,12 @@ from macls.utils.utils import add_arguments, print_arguments
 def main():
     # 获取参数
     file_path = sys.argv[1]
-    model_path = "./model/"
+    dir_path = sys.argv[2]
+    model_path = dir_path+"/model/"
     
     parser = argparse.ArgumentParser(description="智慧水务音频识别")
     add_arg = functools.partial(add_arguments, argparser=parser)
-    add_arg('configs', str, './config/resnet_se.yml', '配置文件')
+    add_arg('configs', str, dir_path+'/config/resnet_se.yml', '配置文件')
     add_arg('use_gpu', bool, False, '是否使用GPU预测')
     add_arg('model_path', str, model_path, '导出的预测模型文件路径')
     args = parser.parse_args(args=[]) 
@@ -33,5 +34,4 @@ def main():
     # 输出结果
     print(json.dumps(result))
 
-if __name__ == "__main__":
-    main()
+main()
