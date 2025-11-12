@@ -26,12 +26,19 @@ def main():
         log_level="error"
     )
     result, score = predictor.predict(file_path)
-    result = {
+    if result == "2":
+        result = "高风险"
+    elif result == "1":
+        result = "无风险"
+    else:
+        result = "低风险"
+
+    result_j = {
         "risk_level": result,
         "confidence": score
     }
     
     # 输出结果
-    print(json.dumps(result))
+    print(json.dumps(result_j))
 
 main()

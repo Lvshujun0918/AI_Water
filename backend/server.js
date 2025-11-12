@@ -132,6 +132,19 @@ app.get('/api/init-status', (req, res) => {
   });
 });
 
+function getAudioID(filename) {
+  const query = `SELECT id FROM audio_files WHERE filename = ?`;
+  return new Promise((resolve, reject) => {
+    db.get(query, [filename], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row ? row.id : null);
+      }
+    });
+  });
+}
+
 // 初始化管理员账户
 app.post('/api/init-admin', async (req, res) => {
   const { username, password } = req.body;
@@ -376,26 +389,69 @@ app.delete('/api/audio-files/:id', authenticateToken, (req, res) => {
   });
 });
 
+// 音频处理状态跟踪
+const processingStatus = new Map();
+
+// 获取处理状态
+app.get('/api/audio-processing-status/:name', authenticateToken, (req, res) => {
+  const { name } = req.params;
+  const status = processingStatus.get(name) || { status: 'unknown' };
+  res.json({
+    success: true,
+    data: status
+  });
+});
+
 // 使用Python模型处理单个音频文件
-function processAudioFile(pathB) {
+function processAudioFile(file,id) {
   return new Promise((resolve, reject) => {
-    const filePath = pathB;
+    const filePath = file;
     const dirpath = path.join(__dirname, 'py');
+    console.log('Processing file ID:', id);
+    let audioFile = {
+      id: id,
+      filename: path.basename(file),
+    };
 
-    // 检查文件是否存在
-    if (!fs.existsSync(filePath)) {
-      console.error('音频文件不存在:', filePath);
-      return reject(new Error('音频文件不存在'));
-    }
-
+    // 更新处理状态为开始处理
+    processingStatus.set(path.basename(file), {
+      status: 'processing',
+      progress: 10,
+      message: '开始处理音频文件'
+    });
+    
     // 配置PythonShell选项
     const options = {
-      scriptPath: path.join(__dirname, 'py'),
+      scriptPath: dirpath,
       args: [filePath, dirpath]
     };
-    PythonShell.run('predict.py', options).then(messages => {
-      const prediction = JSON.parse(messages[0]);
+
+    // 更新处理状态
+    processingStatus.set(path.basename(file), {
+      status: 'processing',
+      progress: 30,
+      message: '正在加载模型'
+    });
+
+    // 调用Python脚本进行预测
+    PythonShell.run('predict.py', options).then(results => {
+
+      // 解析Python脚本返回的JSON结果
+      const prediction = JSON.parse(results[0]);
+      console.log('Prediction result:', prediction);
+      // 更新处理状态
+      processingStatus.set(audioFile.id, {
+        status: 'processing',
+        progress: 80,
+        message: '正在保存结果到数据库'
+      });
+      
       if (prediction.error) {
+        processingStatus.set(path.basename(file), {
+          status: 'error',
+          progress: 0,
+          message: prediction.error
+        });
         console.error('预测出错:', prediction.error);
         return reject(new Error(prediction.error));
       }
@@ -404,24 +460,37 @@ function processAudioFile(pathB) {
       const updateQuery = `
         UPDATE audio_files 
         SET risk_level = ?, confidence = ? 
-        WHERE filename = ?
+        WHERE id = ?
       `;
       
       db.run(updateQuery, [
         prediction.risk_level, 
         prediction.confidence, 
-        path.basename(pathB)
+        audioFile.id
       ], function(err) {
         if (err) {
+          processingStatus.set(path.basename(file), {
+            status: 'error',
+            progress: 0,
+            message: '更新数据库失败'
+          });
           console.error('更新数据库失败:', err);
           return reject(err);
         }
         
-        console.log(`音频文件 ${path.basename(pathB)} 处理完成:`, prediction);
+        // 更新处理状态为完成
+        processingStatus.set(path.basename(file), {
+          status: 'completed',
+          progress: 100,
+          message: '处理完成',
+          result: prediction
+        });
+        
+        console.log(`音频文件 ${audioFile.filename} 处理完成:`, prediction);
         resolve(prediction);
       });
     });
-
+    
   });
 }
 
@@ -435,49 +504,15 @@ app.post('/api/upload-audio', authenticateToken, upload.single('audio'), (req, r
     });
   }
 
-  // 获取用户ID（实际项目中应从认证信息中获取）
-  const userId = req.body.userId || null;
-
-  // 保存文件信息到数据库
-  const insertQuery = `INSERT INTO audio_files 
-    (filename, original_name, mimetype, size, user_id, risk_level, confidence) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-  // 默认风险等级为"未知"，置信度为0.0
-  const params = [
-    req.file.filename,
-    req.file.originalname,
-    req.file.mimetype,
-    req.file.size,
-    userId,
-    '未检测',
-    0.0
-  ];
-
-  db.run(insertQuery, params, function (err) {
-    if (err) {
-      // 如果保存数据库失败，删除已上传的文件
-      fs.unlinkSync(req.file.path);
-      return res.status(500).json({
-        success: false,
-        message: '文件上传失败'
-      });
+  res.status(200).json({
+    success: true,
+    message: '音频文件上传成功',
+    file: {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
     }
-
-    res.status(200).json({
-      success: true,
-      message: '音频文件上传成功',
-      file: {
-        id: this.lastID,
-        filename: req.file.filename,
-        originalName: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        risk_level: '未知',
-        confidence: 0.0,
-        url: `/uploads/${req.file.filename}`
-      }
-    });
   });
 });
 
@@ -527,7 +562,38 @@ app.listen(PORT, () => {
   watcher
     .on('add', filePath => {
       console.log(`文件已添加: ${filePath}`);
-      processAudioFile(filePath);
+          
+      // 获取用户ID（实际项目中应从认证信息中获取）
+      const userId = 1;
+
+      // 保存文件信息到数据库
+      const insertQuery = `INSERT INTO audio_files 
+        (filename, original_name, mimetype, size, user_id, risk_level, confidence) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+      // 默认风险等级为"未知"，置信度为0.0
+      const params = [
+        path.basename(filePath),
+        '',
+        'audio',
+        0,
+        userId,
+        '未检测',
+        0.0
+      ];
+
+      db.run(insertQuery, params, function (err) {
+        if (err) {
+          // 如果保存数据库失败，删除已上传的文件
+          fs.unlinkSync(filePath);
+          return res.status(500).json({
+            success: false,
+            message: '文件上传失败'
+          });
+        }
+        processAudioFile(filePath,this.lastID);
+      });
+      
     })
     .on('error', error => {
       console.error(`监控错误: ${error}`);
