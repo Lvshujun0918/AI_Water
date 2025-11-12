@@ -394,9 +394,7 @@ function processAudioFile(pathB) {
       args: [filePath, dirpath]
     };
     PythonShell.run('predict.py', options).then(messages => {
-      console.log(messages);
       const prediction = JSON.parse(messages[0]);
-      console.log('音频文件预测结果:', prediction);
       if (prediction.error) {
         console.error('预测出错:', prediction.error);
         return reject(new Error(prediction.error));
