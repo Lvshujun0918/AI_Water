@@ -58,6 +58,16 @@
             <el-button @click="resetForm">重置</el-button>
           </el-form-item>
         </el-form>
+        
+        <el-alert
+          v-if="uploadSuccess"
+          title="上传成功"
+          type="success"
+          description="文件已成功上传，系统将自动进行风险分析，请稍后在记录管理中查看分析结果。"
+          show-icon
+          closable
+          style="margin-top: 20px;"
+        />
       </el-card>
     </div>
   </Layout>
@@ -86,7 +96,8 @@ export default {
           { required: true, message: '请选择音频文件', trigger: 'change' }
         ]
       },
-      uploading: false
+      uploading: false,
+      uploadSuccess: false
     }
   },
   
@@ -110,12 +121,14 @@ export default {
     resetForm() {
       this.$refs.uploadFormRef.resetFields()
       this.uploadForm.remark = ''
+      this.uploadSuccess = false
     },
     
     submitUpload() {
       this.$refs.uploadFormRef.validate(async (valid) => {
         if (valid) {
           this.uploading = true
+          this.uploadSuccess = false
           
           try {
             const formData = new FormData()
@@ -130,6 +143,7 @@ export default {
             
             if (response.data.success) {
               this.$message.success('上传成功')
+              this.uploadSuccess = true
               this.resetForm()
             } else {
               this.$message.error(response.data.message || '上传失败')
