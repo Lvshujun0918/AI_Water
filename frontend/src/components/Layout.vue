@@ -102,7 +102,6 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="profile">个人资料</el-dropdown-item>
-                <el-dropdown-item command="settings">设置</el-dropdown-item>
                 <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -179,10 +178,7 @@ export default {
           this.handleLogout()
           break
         case 'profile':
-          this.$message.info('个人资料功能待开发')
-          break
-        case 'settings':
-          this.$message.info('设置功能待开发')
+          this.$router.push('/profile')
           break
       }
     },
@@ -191,6 +187,8 @@ export default {
       // 清除登录状态
       localStorage.removeItem('isLoggedIn')
       localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
       
       // 跳转到登录页
       this.$router.push('/login')

@@ -5,6 +5,7 @@ import Dashboard from '../views/Dashboard.vue'
 import Records from '../views/Records.vue'
 import Upload from '../views/Upload.vue'
 import UserManagement from '../views/UserManagement.vue'
+import Profile from '../views/Profile.vue'
 
 const routes = [
   {
@@ -39,6 +40,12 @@ const routes = [
     path: '/users',
     name: 'UserManagement',
     component: UserManagement,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
     meta: { requiresAuth: true }
   }
 ]

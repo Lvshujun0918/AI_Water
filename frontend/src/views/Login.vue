@@ -116,8 +116,9 @@ export default {
             
             if (response.data.success) {
               // 保存JWT token和用户信息
-              localStorage.setItem('token', response.data.token)
-              localStorage.setItem('user', JSON.stringify(response.data.user))
+              localStorage.setItem('token', response.data.data.accessToken)
+              localStorage.setItem('refreshToken', response.data.data.refreshToken)
+              localStorage.setItem('user', JSON.stringify(response.data.data.user))
               
               // 跳转到仪表板
               this.$router.push('/dashboard')

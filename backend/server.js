@@ -3,15 +3,17 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const { PythonShell } = require('python-shell');
 const chokidar = require('chokidar');
-
-// JWT密钥
-const JWT_SECRET = process.env.JWT_SECRET || 'riscv-admin-secret-key';
+const { 
+  generateAccessToken, 
+  generateRefreshToken, 
+  verifyAccessToken,
+  JWT_CONFIG
+} = require('./utils/jwt');
 
 // JWT认证中间件
 const authenticateToken = (req, res, next) => {
@@ -25,16 +27,16 @@ const authenticateToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        success: false,
-        message: '令牌无效或已过期'
-      });
-    }
-    req.user = user;
-    next();
-  });
+  const decoded = verifyAccessToken(token);
+  if (!decoded) {
+    return res.status(403).json({
+      success: false,
+      message: '令牌无效或已过期'
+    });
+  }
+  
+  req.user = decoded;
+  next();
 };
 
 // 创建 Express 应用
@@ -240,23 +242,27 @@ app.post('/api/login', (req, res) => {
       }
 
       // 生成JWT token
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username: user.username
-        },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-      );
+      const accessToken = generateAccessToken({
+        id: user.id,
+        username: user.username
+      });
+      
+      const refreshToken = generateRefreshToken({
+        id: user.id,
+        username: user.username
+      });
 
       // 登录成功
       res.json({
         success: true,
         message: '登录成功',
-        token: token,
-        user: {
-          id: user.id,
-          username: user.username
+        data: {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          user: {
+            id: user.id,
+            username: user.username
+          }
         }
       });
     });
@@ -328,6 +334,33 @@ app.get('/api/users', authenticateToken, (req, res) => {
   });
 });
 
+// 获取当前用户信息接口 - 需要认证
+app.get('/api/users/profile', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const query = `SELECT id, username, created_at FROM users WHERE id = ?`;
+  
+  db.get(query, [userId], (err, row) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: '服务器内部错误'
+      });
+    }
+    
+    if (!row) {
+      return res.status(404).json({
+        success: false,
+        message: '用户不存在'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: row
+    });
+  });
+});
+
 // 获取音频文件列表接口 - 需要认证
 app.get('/api/audio-files', authenticateToken, (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -392,6 +425,79 @@ app.delete('/api/audio-files/:id', authenticateToken, (req, res) => {
 // 音频处理状态跟踪
 const processingStatus = new Map();
 
+// 更新用户密码接口 - 需要认证
+app.put('/api/users/change-password', authenticateToken, async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      message: '旧密码和新密码不能为空'
+    });
+  }
+
+  if (newPassword.length < 6 || newPassword.length > 20) {
+    return res.status(400).json({
+      success: false,
+      message: '密码长度应在6到20个字符之间'
+    });
+  }
+
+  try {
+    // 查询用户当前信息
+    const query = `SELECT * FROM users WHERE id = ?`;
+    db.get(query, [userId], async (err, user) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: '服务器内部错误'
+        });
+      }
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: '用户不存在'
+        });
+      }
+
+      // 验证旧密码
+      const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: '旧密码错误'
+        });
+      }
+
+      // 加密新密码
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // 更新密码
+      const updateQuery = `UPDATE users SET password = ? WHERE id = ?`;
+      db.run(updateQuery, [hashedNewPassword, userId], function (err) {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: '更新密码失败'
+          });
+        }
+
+        res.json({
+          success: true,
+          message: '密码更新成功'
+        });
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: '服务器内部错误'
+    });
+  }
+});
+
 // 获取处理状态
 app.get('/api/audio-processing-status/:name', authenticateToken, (req, res) => {
   const { name } = req.params;
@@ -399,6 +505,40 @@ app.get('/api/audio-processing-status/:name', authenticateToken, (req, res) => {
   res.json({
     success: true,
     data: status
+  });
+});
+
+// 刷新访问令牌接口
+app.post('/api/auth/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: '缺少刷新令牌'
+    });
+  }
+
+  const decoded = verifyRefreshToken(refreshToken);
+  if (!decoded) {
+    return res.status(403).json({
+      success: false,
+      message: '刷新令牌无效或已过期'
+    });
+  }
+
+  // 生成新的访问令牌
+  const newAccessToken = generateAccessToken({
+    id: decoded.id,
+    username: decoded.username
+  });
+
+  res.json({
+    success: true,
+    message: '令牌刷新成功',
+    data: {
+      accessToken: newAccessToken
+    }
   });
 });
 
