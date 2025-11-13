@@ -1,73 +1,132 @@
 <template>
   <Layout :user="user">
     <div class="dashboard-container">
-      <el-card class="welcome-card">
-        <template #header>
-          <div class="card-header">
-            <h2>系统概览</h2>
-          </div>
-        </template>
-        
-        <div class="welcome-content">
-          <h3>欢迎, {{ user.username }}!</h3>
-          <p>您已成功登录AI检漏管理系统</p>
-        </div>
-        
-        <div class="stats-grid">
-          <el-card class="stat-card">
-            <div class="stat-content">
-              <el-icon class="stat-icon" color="#409eff"><Document /></el-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ stats.audioFiles }}</div>
-                <div class="stat-label">音频文件</div>
-              </div>
-            </div>
-          </el-card>
-          
-          <el-card class="stat-card">
-            <div class="stat-content">
-              <el-icon class="stat-icon" color="#67c23a"><User /></el-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ stats.users }}</div>
-                <div class="stat-label">用户数</div>
-              </div>
-            </div>
-          </el-card>
-        </div>
-      </el-card>
+      <div class="dashboard-header">
+        <h1>系统看板</h1>
+        <el-button @click="resetLayout" size="small">重置布局</el-button>
+      </div>
       
-      <!-- 音频上传趋势图表 -->
-      <el-card class="chart-card">
-        <template #header>
-          <div class="card-header">
-            <h2>音频上传趋势</h2>
+      <draggable 
+        v-model="dashboardItems" 
+        item-key="id"
+        animation="200"
+        class="dashboard-grid"
+        :disabled="false"
+        ghost-class="ghost"
+        chosen-class="chosen"
+      >
+        <template #item="{ element }">
+          <div class="dashboard-item" :class="element.size || 'full'">
+            <el-card class="dashboard-card">
+              <template #header>
+                <div class="card-header">
+                  <h2>{{ element.title }}</h2>
+                  <el-button 
+                    @click="removeItem(element.id)" 
+                    type="danger" 
+                    size="small" 
+                    circle 
+                    icon="Delete"
+                  />
+                </div>
+              </template>
+              
+              <div class="card-content">
+                <!-- 欢迎卡片 -->
+                <div v-if="element.type === 'welcome'" class="welcome-content">
+                  <h3>欢迎, {{ user.username }}!</h3>
+                  <p>您已成功登录AI检漏管理系统</p>
+                  
+                  <div class="stats-grid">
+                    <el-card class="stat-card">
+                      <div class="stat-content">
+                        <el-icon class="stat-icon" color="#409eff"><Document /></el-icon>
+                        <div class="stat-info">
+                          <div class="stat-number">{{ stats.audioFiles }}</div>
+                          <div class="stat-label">音频文件</div>
+                        </div>
+                      </div>
+                    </el-card>
+                    
+                    <el-card class="stat-card">
+                      <div class="stat-content">
+                        <el-icon class="stat-icon" color="#67c23a"><User /></el-icon>
+                        <div class="stat-info">
+                          <div class="stat-number">{{ stats.users }}</div>
+                          <div class="stat-label">用户数</div>
+                        </div>
+                      </div>
+                    </el-card>
+                  </div>
+                </div>
+                
+                <!-- 上传趋势图表 -->
+                <div v-else-if="element.type === 'upload-trend'" class="chart-container" v-loading="chartLoading">
+                  <v-chart class="chart" :option="chartOption" autoresize />
+                </div>
+                
+                <!-- 风险统计图表 -->
+                <div v-else-if="element.type === 'risk-stats'" class="chart-container" v-loading="riskChartLoading">
+                  <v-chart class="chart" :option="riskChartOption" autoresize />
+                </div>
+                
+                <!-- 最近文件卡片 -->
+                <div v-else-if="element.type === 'recent-files'" class="recent-files">
+                  <el-table :data="recentFiles" style="width: 100%" max-height="300">
+                    <el-table-column prop="filename" label="文件名" />
+                    <el-table-column prop="risk_level" label="风险等级">
+                      <template #default="scope">
+                        <el-tag :type="getRiskLevelTagType(scope.row.risk_level)">
+                          {{ scope.row.risk_level || '未检测' }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="upload_time" label="上传时间" />
+                  </el-table>
+                </div>
+                
+                <!-- 用户统计卡片 -->
+                <div v-else-if="element.type === 'user-stats'" class="user-stats">
+                  <div class="stats-info">
+                    <div class="stats-item">
+                      <div class="stats-value">{{ stats.users }}</div>
+                      <div class="stats-label">总用户数</div>
+                    </div>
+                    <div class="stats-item">
+                      <div class="stats-value">{{ stats.audioFiles }}</div>
+                      <div class="stats-label">总文件数</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </el-card>
           </div>
         </template>
-        
-        <div class="chart-container" v-loading="chartLoading">
-          <v-chart class="chart" :option="chartOption" autoresize />
-        </div>
-      </el-card>
+      </draggable>
       
-      <!-- 文件风险情况统计图表 -->
-      <el-card class="chart-card">
-        <template #header>
-          <div class="card-header">
-            <h2>文件风险情况统计</h2>
-          </div>
-        </template>
-        
-        <div class="chart-container" v-loading="riskChartLoading">
-          <v-chart class="chart" :option="riskChartOption" autoresize />
-        </div>
-      </el-card>
+      <!-- 添加卡片按钮 -->
+      <div class="add-card-section">
+        <el-dropdown @command="addCard">
+          <el-button type="primary">
+            添加卡片 <el-icon class="el-icon--right"><arrow-down /></el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="upload-trend">上传趋势图表</el-dropdown-item>
+              <el-dropdown-item command="risk-stats">风险统计图表</el-dropdown-item>
+              <el-dropdown-item command="recent-files">最近文件</el-dropdown-item>
+              <el-dropdown-item command="user-stats">用户统计</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
   </Layout>
 </template>
 
 <script>
 import Layout from '../components/Layout.vue'
-import { Document, User } from '@element-plus/icons-vue'
+import { Document, User, Delete, ArrowDown } from '@element-plus/icons-vue'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, PieChart } from 'echarts/charts'
@@ -79,6 +138,7 @@ import {
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { apiClient } from '../config/api'
+import draggable from 'vuedraggable'
 
 use([
   CanvasRenderer,
@@ -96,7 +156,10 @@ export default {
     Layout,
     Document,
     User,
-    VChart
+    Delete,
+    ArrowDown,
+    VChart,
+    draggable
   },
   data() {
     return {
@@ -105,6 +168,7 @@ export default {
         audioFiles: 0,
         users: 1
       },
+      recentFiles: [],
       chartLoading: false,
       riskChartLoading: false,
       chartOption: {
@@ -162,7 +226,27 @@ export default {
             }
           }
         ]
-      }
+      },
+      dashboardItems: [
+        {
+          id: 'welcome',
+          title: '系统概览',
+          type: 'welcome',
+          size: 'full'
+        },
+        {
+          id: 'upload-trend',
+          title: '音频上传趋势',
+          type: 'upload-trend',
+          size: 'half'
+        },
+        {
+          id: 'risk-stats',
+          title: '文件风险情况统计',
+          type: 'risk-stats',
+          size: 'half'
+        }
+      ]
     }
   },
   
@@ -181,6 +265,9 @@ export default {
     
     // 获取风险统计图表数据
     await this.fetchRiskChartData()
+    
+    // 加载保存的布局
+    this.loadLayout()
   },
   
   methods: {
@@ -190,6 +277,13 @@ export default {
         const response = await apiClient.get('/audio-files')
         if (response.data.success) {
           this.stats.audioFiles = response.data.data.length
+          this.recentFiles = response.data.data.slice(0, 5) // 获取最近5个文件
+        }
+        
+        // 获取用户统计
+        const userResponse = await apiClient.get('/users')
+        if (userResponse.data.success) {
+          this.stats.users = userResponse.data.total
         }
       } catch (error) {
         console.error('获取统计信息失败:', error)
@@ -305,6 +399,99 @@ export default {
       }
       
       return riskData
+    },
+    
+    getRiskLevelTagType(riskLevel) {
+      const typeMap = {
+        '高风险': 'danger',
+        '中风险': 'warning',
+        '低风险': 'success',
+        '未检测': 'info'
+      }
+      return typeMap[riskLevel] || 'info'
+    },
+    
+    addCard(type) {
+      const cards = {
+        'upload-trend': {
+          id: 'upload-trend-' + Date.now(),
+          title: '音频上传趋势',
+          type: 'upload-trend',
+          size: 'half'
+        },
+        'risk-stats': {
+          id: 'risk-stats-' + Date.now(),
+          title: '文件风险情况统计',
+          type: 'risk-stats',
+          size: 'half'
+        },
+        'recent-files': {
+          id: 'recent-files-' + Date.now(),
+          title: '最近文件',
+          type: 'recent-files',
+          size: 'half'
+        },
+        'user-stats': {
+          id: 'user-stats-' + Date.now(),
+          title: '用户统计',
+          type: 'user-stats',
+          size: 'half'
+        }
+      }
+      
+      this.dashboardItems.push(cards[type])
+      this.saveLayout()
+    },
+    
+    removeItem(id) {
+      this.dashboardItems = this.dashboardItems.filter(item => item.id !== id)
+      this.saveLayout()
+    },
+    
+    resetLayout() {
+      this.dashboardItems = [
+        {
+          id: 'welcome',
+          title: '系统概览',
+          type: 'welcome',
+          size: 'full'
+        },
+        {
+          id: 'upload-trend',
+          title: '音频上传趋势',
+          type: 'upload-trend',
+          size: 'half'
+        },
+        {
+          id: 'risk-stats',
+          title: '文件风险情况统计',
+          type: 'risk-stats',
+          size: 'half'
+        }
+      ]
+      this.saveLayout()
+    },
+    
+    saveLayout() {
+      localStorage.setItem('dashboardLayout', JSON.stringify(this.dashboardItems))
+    },
+    
+    loadLayout() {
+      const savedLayout = localStorage.getItem('dashboardLayout')
+      if (savedLayout) {
+        try {
+          const items = JSON.parse(savedLayout)
+          // 确保每个项目都有size属性
+          this.dashboardItems = items.map(item => ({
+            ...item,
+            size: item.size || 'full'
+          }))
+        } catch (e) {
+          console.error('加载布局失败:', e)
+          // 如果解析失败，使用默认布局
+          this.resetLayout()
+        }
+      }
     }
   }
 }
@@ -315,12 +502,65 @@ export default {
   padding: 20px;
 }
 
-.welcome-card {
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 
+.dashboard-header h1 {
+  margin: 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-item {
+  transition: transform 0.2s ease;
+}
+
+.dashboard-item.full {
+  grid-column: span 2;
+}
+
+.dashboard-item.half {
+  grid-column: span 1;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-item.full,
+  .dashboard-item.half {
+    grid-column: span 1;
+  }
+}
+
+.dashboard-card {
+  height: 100%;
+}
+
 .card-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-content {
+  min-height: 200px;
 }
 
 .welcome-content {
@@ -342,25 +582,25 @@ export default {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
   margin-top: 20px;
 }
 
 .stat-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
 }
 
 .stat-icon {
-  font-size: 40px;
-  margin-right: 20px;
+  font-size: 30px;
+  margin-right: 15px;
 }
 
 .stat-info {
@@ -368,27 +608,70 @@ export default {
 }
 
 .stat-number {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
 .stat-label {
-  font-size: 16px;
+  font-size: 14px;
   color: #666;
 }
 
-.chart-card {
-  margin-top: 20px;
-}
-
 .chart-container {
-  height: 400px;
-  padding: 20px 0;
+  height: 300px;
+  padding: 10px 0;
 }
 
 .chart {
   height: 100%;
   width: 100%;
+}
+
+.recent-files {
+  padding: 10px;
+}
+
+.user-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.stats-info {
+  display: flex;
+  gap: 40px;
+}
+
+.stats-item {
+  text-align: center;
+}
+
+.stats-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.stats-label {
+  font-size: 16px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.add-card-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+
+.chosen {
+  border: 2px solid #409eff;
+  transform: scale(0.98);
 }
 </style>
