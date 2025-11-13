@@ -20,7 +20,8 @@
     "element-plus": "^2.3.0",
     "vue": "^3.3.0",
     "vue-echarts": "^8.0.1",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.0",
