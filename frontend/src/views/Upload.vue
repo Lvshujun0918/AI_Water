@@ -251,6 +251,66 @@ export default {
         }
         this.startStatusCheck(this.uploadedFile.id)
       }
+    },
+
+    async handleUpload() {
+      if (!this.selectedFile) {
+        this.$message.warning('请先选择文件')
+        return
+      }
+
+      const formData = new FormData()
+      formData.append('audio', this.selectedFile)
+
+      this.uploading = true
+      this.uploadProgress = 0
+
+      try {
+        // 模拟上传进度
+        const progressInterval = setInterval(() => {
+          if (this.uploadProgress < 90) {
+            this.uploadProgress += 10
+          }
+        }, 200)
+
+        const response = await apiClient.post('/upload-audio', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+
+        clearInterval(progressInterval)
+        this.uploadProgress = 100
+
+        if (response.data.success) {
+          this.$message.success('文件上传成功')
+          
+          // 添加通知
+          this.$parent.$refs.layout.addNotification(
+            '上传成功',
+            `文件 "${this.selectedFile.name}" 已成功上传，正在处理中...`,
+            'success'
+          )
+
+          // 重置表单
+          this.selectedFile = null
+          this.uploadProgress = 0
+          this.$refs.uploadForm.clearFiles()
+        } else {
+          this.$message.error(response.data.message || '上传失败')
+        }
+      } catch (error) {
+        this.$message.error('上传失败: ' + (error.response?.data?.message || error.message))
+        
+        // 添加错误通知
+        this.$parent.$refs.layout.addNotification(
+          '上传失败',
+          `文件 "${this.selectedFile.name}" 上传失败: ${error.response?.data?.message || error.message}`,
+          'error'
+        )
+      } finally {
+        this.uploading = false
+      }
     }
   }
 }
