@@ -48,6 +48,19 @@
           <v-chart class="chart" :option="chartOption" autoresize />
         </div>
       </el-card>
+      
+      <!-- 文件风险情况统计图表 -->
+      <el-card class="chart-card">
+        <template #header>
+          <div class="card-header">
+            <h2>文件风险情况统计</h2>
+          </div>
+        </template>
+        
+        <div class="chart-container" v-loading="riskChartLoading">
+          <v-chart class="chart" :option="riskChartOption" autoresize />
+        </div>
+      </el-card>
     </div>
   </Layout>
 </template>
@@ -57,7 +70,7 @@ import Layout from '../components/Layout.vue'
 import { Document, User } from '@element-plus/icons-vue'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { LineChart } from 'echarts/charts'
+import { LineChart, PieChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -70,6 +83,7 @@ import { apiClient } from '../config/api'
 use([
   CanvasRenderer,
   LineChart,
+  PieChart,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
@@ -92,6 +106,7 @@ export default {
         users: 1
       },
       chartLoading: false,
+      riskChartLoading: false,
       chartOption: {
         title: {
           text: '最近7天音频上传数量',
@@ -120,6 +135,33 @@ export default {
             }
           }
         ]
+      },
+      riskChartOption: {
+        title: {
+          text: '文件风险情况统计',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: '50%',
+            data: [],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
     }
   },
@@ -136,6 +178,9 @@ export default {
     
     // 获取图表数据
     await this.fetchChartData()
+    
+    // 获取风险统计图表数据
+    await this.fetchRiskChartData()
   },
   
   methods: {
@@ -169,6 +214,26 @@ export default {
         this.$message.error('获取图表数据失败')
       } finally {
         this.chartLoading = false
+      }
+    },
+    
+    async fetchRiskChartData() {
+      this.riskChartLoading = true
+      try {
+        // 获取所有音频文件数据
+        const response = await apiClient.get('/audio-files')
+        if (response.data.success) {
+          // 处理数据，按风险等级统计
+          const riskData = this.processRiskData(response.data.data)
+          
+          // 更新图表数据
+          this.riskChartOption.series[0].data = riskData
+        }
+      } catch (error) {
+        console.error('获取风险统计图表数据失败:', error)
+        this.$message.error('获取风险统计图表数据失败')
+      } finally {
+        this.riskChartLoading = false
       }
     },
     
@@ -207,6 +272,39 @@ export default {
         dates,
         counts
       }
+    },
+    
+    processRiskData(audioFiles) {
+      // 创建一个映射来存储不同风险等级的数量
+      const riskMap = new Map([
+        ['高风险', 0],
+        ['中风险', 0],
+        ['低风险', 0],
+        ['未检测', 0]
+      ])
+      
+      // 统计各个风险等级的数量
+      audioFiles.forEach(file => {
+        const riskLevel = file.risk_level || '未检测'
+        if (riskMap.has(riskLevel)) {
+          riskMap.set(riskLevel, riskMap.get(riskLevel) + 1)
+        } else {
+          riskMap.set(riskLevel, 1)
+        }
+      })
+      
+      // 转换为饼图所需的数据格式
+      const riskData = []
+      for (const [level, count] of riskMap.entries()) {
+        if (count > 0) {
+          riskData.push({
+            value: count,
+            name: level
+          })
+        }
+      }
+      
+      return riskData
     }
   }
 }
