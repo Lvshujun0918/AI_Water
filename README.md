@@ -8,7 +8,6 @@
 <img width="2166" height="1118" alt="image" src="https://github.com/user-attachments/assets/8bf340dc-35ec-4e07-90e0-365b2f84ed62" />
 <img width="513" height="618" alt="image" src="https://github.com/user-attachments/assets/fbc9c861-6ea3-4be8-96eb-26d273f060f9" />
 
-
 ## 项目概述
 
 这是一个前后端分离的管理系统，前端使用 Vue3 + Element Plus 构建用户界面，后端使用 Node.js + Express 提供 API 服务，并通过 Python 机器学习模型进行音频分类识别。
