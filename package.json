@@ -1,7 +1,7 @@
 {
   "name": "ai-water-system",
   "version": "1.0.0",
-  "description": "基于 Element UI 的 RISC-V 后台管理系统",
+  "description": "基于 Element UI 的 智慧水务 后台管理系统",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
@@ -15,7 +15,7 @@
     "admin",
     "ai-water-system"
   ],
-  "author": "RISC-V Admin",
+  "author": "南哪战队",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.0.0"

@@ -1,7 +1,7 @@
 {
   "name": "ai-water-system-backend",
   "version": "1.0.0",
-  "description": "RISC-V 管理系统的后端服务",
+  "description": "智慧水务 管理系统的后端服务",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
@@ -12,7 +12,7 @@
     "sqlite",
     "api"
   ],
-  "author": "RISC-V Admin",
+  "author": "南哪战队",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.0",

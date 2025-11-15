@@ -1,7 +1,7 @@
 {
   "name": "ai-water-system-frontend",
   "version": "1.0.0",
-  "description": "基于 Element Plus 的 RISC-V 管理系统前端",
+  "description": "基于 Element Plus 的 智慧水务 管理系统前端",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,7 +12,7 @@
     "element-plus",
     "admin"
   ],
-  "author": "RISC-V Admin",
+  "author": "南哪战队",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.4.0",
