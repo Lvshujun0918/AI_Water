@@ -384,10 +384,10 @@ export default {
 
 /* 侧边栏样式 */
 .layout-aside {
-  background-color: #304156;
+  background-color: #001529;
   color: #fff;
   transition: width 0.3s ease;
-  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+  box-shadow: 2px 0 8px rgba(29, 35, 41, 0.1);
 }
 
 .logo {
@@ -395,7 +395,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2c3e50;
+  background-color: #002140;
   color: #fff;
   overflow: hidden;
 }
@@ -444,17 +444,17 @@ export default {
 }
 
 .notification-icon:hover {
-  color: #409eff;
+  color: #1890ff;
 }
 
 .user-name {
   margin-right: 10px;
   font-size: 14px;
-  color: #666;
+  color: #333;
 }
 
 .user-avatar {
-  background-color: #409eff;
+  background-color: #1890ff;
   color: white;
   cursor: pointer;
 }
@@ -490,7 +490,7 @@ export default {
 }
 
 .notification-item.unread {
-  background-color: #f0f8ff;
+  background-color: #e6f7ff;
 }
 
 .notification-title {
@@ -499,27 +499,34 @@ export default {
   color: #333;
 }
 
-.notification-message {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 5px;
-  line-height: 1.4;
-}
-
 .notification-time {
   font-size: 12px;
   color: #999;
 }
 
-.no-notifications {
-  padding: 30px;
-  text-align: center;
-  color: #999;
+.notification-content {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
 }
 
-/* 主体内容样式 */
+.notification-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+/* 主内容区域样式 */
 .layout-main {
   background-color: #f0f2f5;
   padding: 20px;
+}
+
+.layout-main-content {
+  background: #fff;
+  padding: 24px;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  min-height: calc(100vh - 100px);
 }
 </style>
