@@ -690,7 +690,7 @@ app.use((error, req, res, next) => {
 });
 
 // 启动服务器
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`后端服务器正在运行，端口: ${PORT}`);
 
   const watcher = chokidar.watch('./uploads', {
