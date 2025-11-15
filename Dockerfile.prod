@@ -7,8 +7,8 @@ WORKDIR /app
 # 复制前端依赖文件
 COPY frontend/package*.json ./frontend/
 
-# 安装前端依赖
-RUN cd frontend && npm ci --only=production
+# 安装前端依赖（包括开发依赖，因为需要构建）
+RUN cd frontend && npm ci
 
 # 复制前端源代码
 COPY frontend/. ./frontend/
