@@ -78,11 +78,11 @@ RUN cd backend && npm ci --only=production
 # 复制后端源代码
 COPY backend/. ./backend/
 
-# 复制构建好的前端静态文件
-COPY --from=frontend-builder /app/dist /var/www/html
+# 复制构建好的前端静态文件到Nginx目录
+COPY --from=frontend-builder /app/frontend/dist /var/www/html
 
 # 复制Nginx配置
-COPY nginx.conf /etc/nginx/http.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 创建必要的目录和设置权限
 RUN mkdir -p \
@@ -90,15 +90,15 @@ RUN mkdir -p \
     /var/log/nginx \
     /var/run/nginx
 
+# 创建非root用户
+RUN adduser -D -u 1001 -G nginx appuser && \
+    chown -R appuser:nginx /app
+
 RUN chown -R nginx:nginx /var/www/html && \
     chmod -R 755 /var/www/html && \
     chown -R nginx:nginx backend/uploads && \
     chmod -R 755 backend/uploads && \
     chmod +x /app/start.sh
-
-# 创建非root用户
-RUN adduser -D -u 1001 -G nginx appuser && \
-    chown -R appuser:nginx /app
 
 USER appuser
 
