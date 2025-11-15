@@ -20,36 +20,51 @@ COPY frontend/. ./frontend/
 RUN cd frontend && npm run build
 
 # 多阶段构建 - 生产环境
-FROM alpine:3.14
+FROM alpine:3.17
 
-# 安装Node.js、Python和相关依赖
+# 安装系统依赖
 RUN apk add --no-cache \
     nodejs npm \
     python3 py3-pip py3-wheel py3-setuptools \
     build-base python3-dev \
     llvm14-dev clang-dev \
-    cmake \
+    cmake make \
     linux-headers \
-    nginx
-
+    nginx 
+    
 # 创建软链接，使python命令指向python3
-RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
+ENV LLVM_CONFIG=/usr/lib/llvm14/bin/llvm-config
 
-# 升级pip并安装依赖解决兼容性问题
+# 升级pip
 RUN pip3 install --upgrade pip
 
-# 先安装numpy解决依赖问题
-RUN pip3 install numpy --no-cache-dir
+# 安装系统库依赖
+RUN apk add --no-cache \
+    openblas-dev \
+    libjpeg-turbo-dev \
+    zlib-dev
 
-# 安装特定版本的PyTorch以解决依赖冲突
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
+# 安装基础Python包
+RUN pip3 install --no-cache-dir \
+    numpy==1.24.3 \
+    scipy==1.10.1 \
+    scikit-learn==1.2.2
 
-# 安装macls包及其依赖
-RUN pip3 install scikit-learn --no-cache-dir
-RUN pip3 install macls --no-cache-dir
+# 安装PyTorch CPU版本
+RUN pip3 install --no-cache-dir \
+    torch==2.0.1 \
+    torchvision==0.15.2 \
+    --index-url https://download.pytorch.org/whl/cpu
+
+# 安装macls及其依赖
+RUN pip3 install --no-cache-dir \
+    numba==0.57.1 \
+    llvmlite==0.40.1 \
+    macls==1.0.0
 
 # 设置工作目录
 WORKDIR /app
@@ -63,23 +78,30 @@ RUN cd backend && npm ci --only=production
 # 复制后端源代码
 COPY backend/. ./backend/
 
-# 复制构建好的前端静态文件到Nginx目录
-COPY --from=frontend-builder /app/frontend/dist /var/www/html
+# 复制构建好的前端静态文件
+COPY --from=frontend-builder /app/dist /var/www/html
 
 # 复制Nginx配置
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/http.d/default.conf
 
-# 创建上传目录
-RUN mkdir -p backend/uploads
+# 创建启动脚本
+COPY start.sh /app/start.sh
+
+# 创建必要的目录和设置权限
+RUN mkdir -p \
+    backend/uploads \
+    /var/log/nginx \
+    /var/run/nginx
+
+RUN chown -R nginx:nginx /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    chown -R nginx:nginx backend/uploads && \
+    chmod -R 755 backend/uploads && \
+    chmod +x /app/start.sh
 
 # 创建非root用户
-RUN addgroup -g 1001 -S appgroup &&\
-    adduser -S appuser -u 1001 -G appgroup
-
-RUN chown -R appuser:appgroup /app
-RUN chown -R appuser:appgroup /var/www/html
-RUN chown -R appuser:appgroup /var/log/nginx
-RUN chown -R appuser:appgroup /etc/nginx
+RUN adduser -D -u 1001 -G nginx appuser && \
+    chown -R appuser:nginx /app
 
 USER appuser
 
