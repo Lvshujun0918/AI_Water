@@ -1,5 +1,5 @@
 {
-  "name": "riscv-frontend",
+  "name": "ai-water-system-frontend",
   "version": "1.0.0",
   "description": "基于 Element Plus 的 RISC-V 管理系统前端",
   "scripts": {

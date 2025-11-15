@@ -1,5 +1,5 @@
 {
-  "name": "riscv-backend",
+  "name": "ai-water-system-backend",
   "version": "1.0.0",
   "description": "RISC-V 管理系统的后端服务",
   "main": "server.js",

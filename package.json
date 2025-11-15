@@ -1,5 +1,5 @@
 {
-  "name": "riscv-admin-system",
+  "name": "ai-water-system",
   "version": "1.0.0",
   "description": "基于 Element UI 的 RISC-V 后台管理系统",
   "main": "index.js",
@@ -13,7 +13,7 @@
     "element-ui",
     "vue3",
     "admin",
-    "riscv"
+    "ai-water-system"
   ],
   "author": "RISC-V Admin",
   "license": "MIT",
