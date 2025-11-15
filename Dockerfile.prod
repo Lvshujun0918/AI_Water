@@ -30,7 +30,8 @@ RUN apk add --no-cache \
     llvm14-dev clang-dev \
     cmake make \
     linux-headers \
-    nginx 
+    nginx \
+    py3-scipy py3-scikit-learn
 
 # 创建软链接，使python命令指向python3
 RUN ln -sf /usr/bin/python3 /usr/bin/python
@@ -48,14 +49,9 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     zlib-dev
 
-RUN pip3 install --no-cache-dir \
-    scipy==1.10.1 \
-    --prefer-binary
-
 # 安装基础Python包
 RUN pip3 install --no-cache-dir \
     numpy==1.24.3 \
-    scikit-learn==1.2.2 \
     --prefer-binary
 
 # 安装PyTorch CPU版本
