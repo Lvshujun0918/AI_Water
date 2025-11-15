@@ -1,0 +1,66 @@
+# 多阶段构建 - 构建前端
+FROM node:16-bullseye AS frontend-builder
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制前端依赖文件
+COPY frontend/package*.json ./frontend/
+
+# 安装前端依赖
+RUN cd frontend && npm install
+
+# 复制前端源代码
+COPY frontend/. ./frontend/
+
+# 构建前端应用
+RUN cd frontend && npm run build
+
+# 多阶段构建 - 后端和生产环境
+FROM node:16-bullseye
+
+# 安装Python和相关依赖
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3-venv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 创建软链接，使python命令指向python3
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# 设置Python环境变量
+ENV PYTHONUNBUFFERED=1
+
+# 安装Python依赖
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+RUN pip3 install macls -U -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制后端依赖文件
+COPY backend/package*.json ./backend/
+
+# 安装后端依赖
+RUN cd backend && npm install --only=production
+
+# 复制后端源代码
+COPY backend/. ./backend/
+
+# 复制构建好的前端静态文件
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+
+# 复制根目录文件
+COPY package*.json ./
+
+# 安装根目录依赖
+RUN npm install --only=production
+
+# 创建上传目录
+RUN mkdir -p backend/uploads
+
+# 暴露端口
+EXPOSE 3000
+
+# 启动应用
+CMD ["npm", "run", "start:prod"]
