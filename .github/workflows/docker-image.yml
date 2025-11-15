@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Production Docker Image
 
 on:
   push:
@@ -44,12 +44,14 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build and push Docker image
+      - name: Build and push Production Docker image
         id: push
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile.prod
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -57,4 +59,3 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64  # 可选：多平台构建
           provenance: true
-
