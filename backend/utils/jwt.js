@@ -18,8 +18,8 @@ const JWT_CONFIG = {
 const generateAccessToken = (payload) => {
   return jwt.sign(payload, JWT_CONFIG.ACCESS_TOKEN_SECRET, {
     expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRES_IN,
-    issuer: 'riscv-admin',
-    audience: 'riscv-admin-users'
+    issuer: 'ai-water-system-admin',
+    audience: 'ai-water-system-admin-users'
   });
 };
 
@@ -31,8 +31,8 @@ const generateAccessToken = (payload) => {
 const generateRefreshToken = (payload) => {
   return jwt.sign(payload, JWT_CONFIG.REFRESH_TOKEN_SECRET, {
     expiresIn: JWT_CONFIG.REFRESH_TOKEN_EXPIRES_IN,
-    issuer: 'riscv-admin',
-    audience: 'riscv-admin-users'
+    issuer: 'ai-water-system-admin',
+    audience: 'ai-water-system-admin-users'
   });
 };
 
@@ -44,8 +44,8 @@ const generateRefreshToken = (payload) => {
 const verifyAccessToken = (token) => {
   try {
     return jwt.verify(token, JWT_CONFIG.ACCESS_TOKEN_SECRET, {
-      issuer: 'riscv-admin',
-      audience: 'riscv-admin-users'
+      issuer: 'ai-water-system-admin',
+      audience: 'ai-water-system-admin-users'
     });
   } catch (error) {
     return null;
@@ -60,8 +60,8 @@ const verifyAccessToken = (token) => {
 const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, JWT_CONFIG.REFRESH_TOKEN_SECRET, {
-      issuer: 'riscv-admin',
-      audience: 'riscv-admin-users'
+      issuer: 'ai-water-system-admin',
+      audience: 'ai-water-system-admin-users'
     });
   } catch (error) {
     return null;
