@@ -56,10 +56,22 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
-  // 如果访问的是首页，不进行认证检查
+router.beforeEach(async (to, from, next) => {
+  // 如果访问的是首页，检查系统初始化状态
   if (to.path === '/') {
-    return next()
+    try {
+      const { data } = await apiClient.get('/init-status');
+      if (data.initialized) {
+        // 如果已初始化，重定向到登录页
+        return next('/login');
+      } else {
+        // 如果未初始化，允许访问首页
+        return next();
+      }
+    } catch (error) {
+      // 检查失败时，允许访问首页
+      return next();
+    }
   }
   
   const token = localStorage.getItem('token')

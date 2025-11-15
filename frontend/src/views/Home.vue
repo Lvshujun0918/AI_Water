@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <div class="init-form" v-if="!initialized">
+    <div class="init-form" v-if="!initialized && !initChecked">
       <el-card class="init-card" shadow="always">
         <template #header>
           <div class="card-header">
@@ -81,20 +81,19 @@
       </div>
     </div>
     
-    <div class="init-success" v-else>
+    <div class="init-success" v-else-if="initialized && !initChecked">
       <el-card class="success-card" shadow="always">
         <el-result 
           icon="success" 
           title="系统初始化成功" 
-          subTitle="管理员账户已创建，您可以使用该账户登录系统"
+          subTitle="管理员账户已创建，正在跳转到登录页面..."
         >
-          <template #extra>
-            <el-button type="primary" @click="$router.push('/login')" size="large" round>
-              前往登录页面
-            </el-button>
-          </template>
         </el-result>
       </el-card>
+    </div>
+    
+    <div class="checking-status" v-else>
+      <!-- 空白占位，避免显示初始化界面 -->
     </div>
   </div>
 </template>
@@ -123,12 +122,15 @@ export default {
       userIcon: User,
       lockIcon: Lock,
       initialized: false,
+      initChecked: false, // 标记是否已完成初始化检查
       loading: false,
       initForm: {
         username: '',
         password: '',
         confirmPassword: ''
       },
+      
+      // 表单验证规则
       initRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -156,8 +158,15 @@ export default {
       try {
         const response = await apiClient.get('/init-status')
         this.initialized = response.data.initialized
+        this.initChecked = true // 标记已完成初始化检查
+        
+        // 如果已经初始化完成，立即跳转到登录页面
+        if (this.initialized) {
+          this.$router.push('/login')
+        }
       } catch (error) {
         this.$message.error('检查初始化状态失败')
+        this.initChecked = true
       }
     },
     
@@ -173,6 +182,9 @@ export default {
             if (response.data.success) {
               this.$message.success('系统初始化成功')
               this.initialized = true
+              
+              // 初始化成功后立即跳转到登录页面
+              this.$router.push('/login')
             } else {
               this.$message.error(response.data.message || '初始化失败')
             }
