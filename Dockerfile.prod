@@ -1,6 +1,9 @@
 # 多阶段构建 - 构建前端
 FROM node:16-alpine AS frontend-builder
 
+# 安装git（某些npm包可能需要）
+RUN apk add --no-cache git
+
 # 设置工作目录
 WORKDIR /app
 
@@ -22,7 +25,7 @@ FROM alpine:3.14
 # 安装Node.js、Python和相关依赖
 RUN apk add --no-cache \
     nodejs npm \
-    python3 py3-pip \
+    python3 py3-pip py3-wheel py3-setuptools \
     nginx
 
 # 创建软链接，使python命令指向python3
@@ -30,6 +33,12 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
+
+# 升级pip并安装依赖解决兼容性问题
+RUN pip3 install --upgrade pip
+
+# 先安装numpy解决依赖问题
+RUN pip3 install numpy --no-cache-dir
 
 # 安装Python依赖
 RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
