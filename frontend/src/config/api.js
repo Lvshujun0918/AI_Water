@@ -75,15 +75,16 @@ apiClient.interceptors.response.use(
     // 检查是否是登录请求
     const isLoginRequest = originalRequest && originalRequest.url.includes('/login');
     
-    // 检查是否是密码更新相关的401错误
+    // 检查是否是密码更新相关的401/403错误
     const isPasswordUpdateRequest = error.config && error.config.url.includes('/users/change-password');
     const isOldPasswordError = error.response && 
-                              error.response.status === 401 && 
+                              (error.response.status === 401 || error.response.status === 403) && 
                               error.response.data && 
                               error.response.data.message === '旧密码错误';
     
-    // 只有不是登录请求且不是旧密码错误时才执行登出操作
-    if (error.response && error.response.status === 401 && !isLoginRequest && !(isPasswordUpdateRequest && isOldPasswordError)) {
+    // 处理401和403错误（令牌无效或过期）
+    if (error.response && (error.response.status === 401 || error.response.status === 403) && 
+        !isLoginRequest && !(isPasswordUpdateRequest && isOldPasswordError)) {
       // 如果是访问令牌过期且不是刷新令牌请求
       if (!originalRequest._retry && !originalRequest.url.includes('/auth/refresh')) {
         originalRequest._retry = true;
@@ -149,17 +150,8 @@ function handleLogout() {
   localStorage.removeItem('user');
   localStorage.removeItem('isLoggedIn');
   
-  // 显示提示框，用户点击确认后跳转到登录页
-  import('element-plus').then(({ ElMessageBox }) => {
-    ElMessageBox.alert('登录状态已过期，请重新登录', '提示', {
-      confirmButtonText: '重新登录',
-      type: 'warning',
-      center: true,
-      callback: () => {
-        window.location.href = '/login';
-      }
-    });
-  });
+  // 直接跳转到登录页，无需用户确认
+  window.location.href = '/login';
 }
 
 export { apiClient };
