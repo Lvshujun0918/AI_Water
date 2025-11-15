@@ -1,5 +1,5 @@
 # 多阶段构建 - 构建前端
-FROM node:16-bullseye AS frontend-builder
+FROM node:16-alpine AS frontend-builder
 
 # 设置工作目录
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY frontend/package*.json ./frontend/
 
 # 安装前端依赖
-RUN cd frontend && npm install
+RUN cd frontend && npm ci --only=production
 
 # 复制前端源代码
 COPY frontend/. ./frontend/
@@ -16,14 +16,14 @@ COPY frontend/. ./frontend/
 # 构建前端应用
 RUN cd frontend && npm run build
 
-# 多阶段构建 - 后端和生产环境
-FROM node:16-bullseye
+# 多阶段构建 - 生产环境
+FROM alpine:3.14
 
-# 安装Python和相关依赖
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-venv && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# 安装Node.js、Python和相关依赖
+RUN apk add --no-cache \
+    nodejs npm \
+    python3 py3-pip \
+    nginx
 
 # 创建软链接，使python命令指向python3
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -32,8 +32,8 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 ENV PYTHONUNBUFFERED=1
 
 # 安装Python依赖
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-RUN pip3 install macls -U -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
+RUN pip3 install macls -U -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir
 
 # 设置工作目录
 WORKDIR /app
@@ -42,25 +42,33 @@ WORKDIR /app
 COPY backend/package*.json ./backend/
 
 # 安装后端依赖
-RUN cd backend && npm install --only=production
+RUN cd backend && npm ci --only=production
 
 # 复制后端源代码
 COPY backend/. ./backend/
 
-# 复制构建好的前端静态文件
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+# 复制构建好的前端静态文件到Nginx目录
+COPY --from=frontend-builder /app/frontend/dist /var/www/html
 
-# 复制根目录文件
-COPY package*.json ./
-
-# 安装根目录依赖
-RUN npm install --only=production
+# 复制Nginx配置
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 创建上传目录
 RUN mkdir -p backend/uploads
 
-# 暴露端口
-EXPOSE 3000
+# 创建非root用户
+RUN addgroup -g 1001 -S appgroup &&\
+    adduser -S appuser -u 1001 -G appgroup
 
-# 启动应用
-CMD ["npm", "run", "start:prod"]
+RUN chown -R appuser:appgroup /app
+RUN chown -R appuser:appgroup /var/www/html
+RUN chown -R appuser:appgroup /var/log/nginx
+RUN chown -R appuser:appgroup /etc/nginx
+
+USER appuser
+
+# 暴露端口 (Nginx端口)
+EXPOSE 80
+
+# 启动应用 (同时运行Nginx和后端)
+CMD ["sh", "-c", "node backend/server.js & nginx -g 'daemon off;'"]
