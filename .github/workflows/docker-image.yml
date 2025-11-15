@@ -57,5 +57,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64  # 可选：多平台构建
+          platforms: linux/amd64,linux/riscv64
           provenance: true
