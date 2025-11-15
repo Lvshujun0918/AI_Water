@@ -26,6 +26,7 @@ FROM alpine:3.14
 RUN apk add --no-cache \
     nodejs npm \
     python3 py3-pip py3-wheel py3-setuptools \
+    build-base python3-dev \
     nginx
 
 # 创建软链接，使python命令指向python3
@@ -43,8 +44,9 @@ RUN pip3 install numpy --no-cache-dir
 # 安装特定版本的PyTorch以解决依赖冲突
 RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
-# 安装macls包
-RUN pip3 install macls -U -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir
+# 安装macls包及其依赖
+RUN pip3 install scikit-learn --no-cache-dir
+RUN pip3 install macls --no-cache-dir
 
 # 设置工作目录
 WORKDIR /app
