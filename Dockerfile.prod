@@ -27,6 +27,9 @@ RUN apk add --no-cache \
     nodejs npm \
     python3 py3-pip py3-wheel py3-setuptools \
     build-base python3-dev \
+    llvm11-dev clang-dev \
+    cmake \
+    linux-headers \
     nginx
 
 # 创建软链接，使python命令指向python3
