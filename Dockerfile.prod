@@ -31,7 +31,7 @@ RUN apk add --no-cache \
     cmake make \
     linux-headers \
     nginx 
-    
+
 # 创建软链接，使python命令指向python3
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
@@ -83,9 +83,6 @@ COPY --from=frontend-builder /app/dist /var/www/html
 
 # 复制Nginx配置
 COPY nginx.conf /etc/nginx/http.d/default.conf
-
-# 创建启动脚本
-COPY start.sh /app/start.sh
 
 # 创建必要的目录和设置权限
 RUN mkdir -p \
