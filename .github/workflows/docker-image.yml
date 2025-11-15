@@ -1,4 +1,4 @@
-name: Build and Push Production Docker Image
+name: Build Docker Image for AMD64
 
 on:
   push:
@@ -57,5 +57,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/riscv64
+          platforms: linux/amd64
           provenance: true
