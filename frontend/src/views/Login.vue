@@ -146,7 +146,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #f0f2f5;
   padding: 20px;
   position: relative;
 }
@@ -158,7 +158,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="%23d0d0d0"/><circle cx="50" cy="50" r="1" fill="%23d0d0d0"/><circle cx="80" cy="80" r="1" fill="%23d0d0d0"/></svg>');
   background-size: 100px 100px;
   opacity: 0.3;
 }
@@ -166,11 +166,10 @@ export default {
 .login-card {
   width: 100%;
   max-width: 500px;
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  background: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -199,7 +198,7 @@ export default {
   margin: 0 0 10px 0;
   font-size: 22px;
   font-weight: 600;
-  color: #409eff;
+  color: #1890ff;
 }
 
 .subtitle {
@@ -219,13 +218,13 @@ export default {
 }
 
 .login-form :deep(.el-input__wrapper) {
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 5px 15px;
 }
 
 .login-footer {
   text-align: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: #666;
   font-size: 14px;
   margin-top: 20px;
 }
