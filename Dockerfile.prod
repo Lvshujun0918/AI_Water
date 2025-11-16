@@ -93,11 +93,11 @@ RUN mkdir -p \
     && chown -R www-data:www-data /etc/nginx
 
 # 创建非root用户
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
-RUN chown -R appuser:appgroup /app
-RUN chown -R appuser:appgroup backend/uploads
+#RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN chown -R www-data:www-data /app
+RUN chown -R www-data:www-data backend/uploads
 
-USER appuser
+USER www-data
 
 # 暴露端口 (Nginx端口)
 EXPOSE 80
