@@ -20,28 +20,26 @@ COPY frontend/. ./frontend/
 RUN cd frontend && npm run build
 
 # 多阶段构建 - 生产环境
-FROM node:bullseye-slim
+FROM ubuntu:24.04
 
 # 避免交互式安装
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 安装Python 3.11和相关依赖
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    gnupg \
-    && rm -rf /var/lib/apt/lists/*
+# NGINX安装
+RUN apt-get update && apt-get install -y nginx curl bash
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nodejs npm \
-    python3.11 python3.11-dev python3.11-venv \
-    python3-pip python3-setuptools \
-    nginx \
-    && rm -rf /var/lib/apt/lists/*
+# Nodejs安装
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash - 
+RUN apt-get install -y nodejs npm
 
-# 创建软链接，使python和pip命令指向python3.11版本
-RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 && \
-    ln -sf /usr/bin/python3 /usr/bin/python && \
-    ln -sf /usr/bin/pip3 /usr/bin/pip
+#python311安装
+RUN add-apt-repository ppa:deadsnakes/ppa
+
+RUN apt update --fix-missing && \
+        apt install python3.11 python3.11-distutils python3.11-dev -y && \
+        apt install python3-pip -y && \
+        ln -sf /usr/bin/python3.11 /usr/bin/python && \
+        ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
@@ -99,7 +97,7 @@ RUN mkdir -p \
     && chown -R www-data:www-data /var/log/nginx \
     && chown -R www-data:www-data /var/lib/nginx \
     && chown -R www-data:www-data /var/run/nginx \
-    && chown -R www-data:www-data /var/www/ \
+    && chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /etc/nginx
 
 # 创建非root用户
