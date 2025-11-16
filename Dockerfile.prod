@@ -46,9 +46,6 @@ RUN apt update --fix-missing && \
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
 
-# 升级pip
-RUN pip3 install --upgrade pip --break-system-packages
-
 # 安装系统库依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
