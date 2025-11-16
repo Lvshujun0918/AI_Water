@@ -79,8 +79,8 @@ pip install .
 ### 1. 克隆项目
 
 ```bash
-git clone <repository-url>
-cd 前后端
+git clone https://github.com/Lvshujun0918/AI_Water
+cd AI_Water
 ```
 
 ### 2. 安装依赖
