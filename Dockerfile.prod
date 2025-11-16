@@ -29,7 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y nginx curl bash
 
 # Nodejs安装
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash - 
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - 
 RUN apt-get install -y nodejs npm
 
 #python311安装
