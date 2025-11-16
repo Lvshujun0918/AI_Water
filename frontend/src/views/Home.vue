@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <div class="init-form" v-if="!initialized && !initChecked">
+    <div class="init-form" v-if="!initialized && initChecked">
       <el-card class="init-card" shadow="always">
         <template #header>
           <div class="card-header">
