@@ -97,4 +97,5 @@ USER appuser
 EXPOSE 80
 
 # 启动应用 (同时运行Nginx和后端)
-CMD ["sh", "-c", "node backend/server.js & nginx -g 'daemon off;'"]
+WORKDIR /app/backend
+CMD ["sh", "-c", "node server.js & nginx -g 'daemon off;'"]
