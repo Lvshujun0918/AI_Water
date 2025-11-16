@@ -1,9 +1,23 @@
 // API 配置文件
 import axios from 'axios'
 
+// 环境检测函数
+// 当应用通过Nginx代理访问时(生产环境)，API请求应使用相对路径
+// 在开发环境中，前端和后端分别运行在不同端口上，需要使用完整的后端地址
+function getBaseURL() {
+  // 检查是否在生产环境(Nginx代理)中运行
+  // 在生产环境中，API通过Nginx代理，所以使用相对路径
+  if (process.env.NODE_ENV === 'production' || 
+      window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return ''; // 使用相对路径，让请求通过Nginx代理
+  }
+  // 开发环境中，前端在localhost:8080，后端在localhost:3000
+  return 'http://localhost:3000';
+}
+
 const API_CONFIG = {
-  // 基础URL
-  BASE_URL: 'http://localhost:3000',
+  // 基础URL - 自动根据环境选择合适的URL
+  BASE_URL: getBaseURL(),
   
   // API前缀
   API_PREFIX: '/api',
