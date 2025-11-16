@@ -20,7 +20,7 @@ COPY frontend/. ./frontend/
 RUN cd frontend && npm run build
 
 # 多阶段构建 - 生产环境
-FROM ubuntu:20.04
+FROM node:16-bullseye-slim
 
 # 避免交互式安装
 ENV DEBIAN_FRONTEND=noninteractive
