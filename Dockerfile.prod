@@ -57,16 +57,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 安装PyTorch CPU版本
 RUN pip3 install --no-cache-dir \
-    torch==1.7.1 \
-    torchvision==0.8.2 \
-    torchaudio==0.7.2 \
+    torch \
+    torchvision \
+    torchaudio \
     --index-url https://download.pytorch.org/whl/cpu --break-system-packages
 
 # 安装macls及其依赖
 RUN pip3 install --no-cache-dir \
-    numba==0.57.1 \
-    llvmlite==0.40.1 \
-    macls==1.0.6 --break-system-packages
+    numba \
+    llvmlite \
+    macls --break-system-packages
 
 # 设置工作目录
 WORKDIR /app
