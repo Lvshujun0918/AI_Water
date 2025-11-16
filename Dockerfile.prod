@@ -60,7 +60,7 @@ RUN pip3 install --no-cache-dir \
 RUN pip3 install --no-cache-dir \
     numba==0.57.1 \
     llvmlite==0.40.1 \
-    macls==1.0.0
+    macls==1.0.6
 
 # 设置工作目录
 WORKDIR /app
