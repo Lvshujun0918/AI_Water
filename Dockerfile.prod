@@ -66,6 +66,7 @@ WORKDIR /app
 
 # 复制后端依赖文件
 COPY backend/package*.json ./backend/
+COPY package*.json ./
 
 # 安装后端依赖
 RUN cd backend && npm install --only=production
