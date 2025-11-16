@@ -78,7 +78,7 @@ COPY backend/. ./backend/
 COPY --from=frontend-builder /app/frontend/dist /var/www/html
 
 # 复制Nginx配置
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # 创建必要的目录和设置权限
 RUN mkdir -p \
@@ -93,10 +93,11 @@ RUN mkdir -p \
     && chown -R www-data:www-data /etc/nginx
 
 # 创建非root用户
-RUN chown -R www-data:www-data /app
-RUN chown -R www-data:www-data backend/uploads
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN chown -R appuser:appgroup /app
+RUN chown -R appuser:appgroup backend/uploads
 
-USER www-data
+USER appuser
 
 # 暴露端口 (Nginx端口)
 EXPOSE 80
