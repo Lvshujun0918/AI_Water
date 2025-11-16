@@ -93,7 +93,6 @@ RUN mkdir -p \
     && chown -R www-data:www-data /etc/nginx
 
 # 创建非root用户
-RUN groupadd -r www-data && useradd -r -g www-data www-data
 RUN chown -R www-data:www-data /app
 RUN chown -R www-data:www-data backend/uploads
 
