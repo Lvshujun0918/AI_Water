@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y nginx curl bash
 
 # Nodejs安装
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - 
-RUN apt-get install -y nodejs npm
+RUN apt-get install -y nodejs
 
 #python311安装
 RUN add-apt-repository ppa:deadsnakes/ppa
