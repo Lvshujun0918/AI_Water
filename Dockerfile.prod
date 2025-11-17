@@ -120,11 +120,11 @@ ARG BUILD_TIME
 ARG VERSION
 
 # 设置环境变量
-ENV BUILD_TIME=${BUILD_TIME}
 ENV VERSION=${VERSION}
 ENV GIT_COMMIT=${GIT_COMMIT}
 
 # 生成随机密钥
+RUN echo "BUILD_TIME=$(date)" > ./backend/.env
 RUN echo "REFRESH_TOKEN_SECRET=$(openssl rand -hex 32)" > ./backend/.env
 RUN echo "ACCESS_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env
 
