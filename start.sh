@@ -2,7 +2,7 @@
 
 # 输出构建时间和版本信息
 echo "-----------------------------------"
-ehco "AI-Water Starting application..."
+echo "AI-Water Starting application..."
 echo "Build Time: ${BUILD_TIME}"
 echo "Version: ${VERSION}"
 echo "Git Commit: ${GIT_COMMIT}"
