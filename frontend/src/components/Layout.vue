@@ -9,7 +9,7 @@
       <el-menu
         :default-active="activeMenu"
         class="layout-menu"
-        background-color="#304156"
+        background-color="#001529"
         text-color="#bfcbd9"
         active-text-color="#409eff"
         :collapse="isCollapse"
@@ -50,7 +50,7 @@
           <!-- 通知图标 -->
           <el-popover
             placement="bottom"
-            :width="300"
+            :width="320"
             trigger="click"
             @show="markNotificationsAsRead"
           >
@@ -101,8 +101,14 @@
             <el-avatar class="user-avatar" :size="30">{{ user.username ? user.username.charAt(0).toUpperCase() : 'U' }}</el-avatar>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="profile">个人资料</el-dropdown-item>
-                <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item command="profile">
+                  <el-icon><User /></el-icon>
+                  个人资料
+                </el-dropdown-item>
+                <el-dropdown-item divided command="logout">
+                  <el-icon><SwitchButton /></el-icon>
+                  退出登录
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -111,14 +117,16 @@
 
       <!-- 主要内容 -->
       <el-main class="layout-main">
-        <slot></slot>
+        <div class="layout-main-content">
+          <slot></slot>
+        </div>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import { House, Document, Upload, User, Expand, Fold, Bell } from '@element-plus/icons-vue'
+import { House, Document, Upload, User, Expand, Fold, Bell, SwitchButton } from '@element-plus/icons-vue'
 import { apiClient } from '../config/api'
 
 export default {
@@ -130,7 +138,8 @@ export default {
     User,
     Expand,
     Fold,
-    Bell
+    Bell,
+    SwitchButton
   },
   props: {
     user: {
@@ -388,6 +397,18 @@ export default {
   color: #fff;
   transition: width 0.3s ease;
   box-shadow: 2px 0 8px rgba(29, 35, 41, 0.1);
+  position: relative;
+  z-index: 100;
+}
+
+.layout-aside::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #f0f2f5;
 }
 
 .logo {
@@ -398,17 +419,72 @@ export default {
   background-color: #002140;
   color: #fff;
   overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #003366;
 }
 
 .logo h2 {
   margin: 0;
   font-weight: 600;
   font-size: 18px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
 }
 
 /* 菜单样式 */
 .layout-menu {
   border: none;
+  transition: all 0.3s ease;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.layout-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.layout-menu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.layout-menu::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.layout-menu .el-menu-item {
+  transition: all 0.3s ease;
+}
+
+.layout-menu .el-menu-item:hover {
+  background-color: #1890ff !important;
+  color: #ffffff !important;
+}
+
+.layout-menu .el-menu-item.is-active {
+  background-color: #1890ff !important;
+  color: #ffffff !important;
+  position: relative;
+}
+
+.layout-menu .el-menu-item.is-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #ffffff;
 }
 
 /* 头部样式 */
@@ -419,6 +495,9 @@ export default {
   background-color: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.12);
   padding: 0 20px;
+  height: 60px;
+  z-index: 10;
+  transition: all 0.3s ease;
 }
 
 .header-left {
@@ -430,6 +509,16 @@ export default {
   font-size: 20px;
   cursor: pointer;
   margin-right: 20px;
+  transition: transform 0.2s ease;
+  color: #666;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.1);
+  color: #1890ff;
+  background-color: #f0f2f5;
 }
 
 .header-right {
@@ -441,22 +530,37 @@ export default {
 .notification-icon {
   cursor: pointer;
   padding: 5px;
+  font-size: 18px;
+  position: relative;
+  transition: color 0.3s;
+  color: #666;
+  border-radius: 4px;
+  padding: 8px;
 }
 
 .notification-icon:hover {
   color: #1890ff;
+  background-color: #f0f2f5;
 }
 
 .user-name {
   margin-right: 10px;
   font-size: 14px;
   color: #333;
+  font-weight: 500;
 }
 
 .user-avatar {
   background-color: #1890ff;
   color: white;
   cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid #e1f0ff;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(24, 144, 255, 0.4);
 }
 
 /* 通知面板样式 */
@@ -468,9 +572,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+  padding: 12px 15px;
   border-bottom: 1px solid #eee;
-  font-weight: bold;
+  font-weight: 600;
+  background-color: #fafafa;
 }
 
 .notification-list {
@@ -482,7 +587,8 @@ export default {
   padding: 12px 15px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  position: relative;
 }
 
 .notification-item:hover {
@@ -491,6 +597,7 @@ export default {
 
 .notification-item.unread {
   background-color: #e6f7ff;
+  border-left: 3px solid #1890ff;
 }
 
 .notification-title {
@@ -502,6 +609,7 @@ export default {
 .notification-time {
   font-size: 12px;
   color: #999;
+  margin-top: 5px;
 }
 
 .notification-content {
@@ -516,17 +624,92 @@ export default {
   margin-top: 10px;
 }
 
+.no-notifications {
+  text-align: center;
+  padding: 30px 0;
+  color: #999;
+}
+
 /* 主内容区域样式 */
 .layout-main {
   background-color: #f0f2f5;
   padding: 20px;
+  transition: padding 0.3s;
+  overflow-y: auto;
 }
 
 .layout-main-content {
   background: #fff;
   padding: 24px;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  min-height: calc(100vh - 100px);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+  min-height: calc(100vh - 140px);
+  transition: all 0.3s ease;
+}
+
+.layout-main-content:hover {
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .layout-aside {
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .layout-aside.collapsed {
+    transform: translateX(-100%);
+  }
+  
+  .layout-header {
+    padding: 0 15px;
+  }
+  
+  .layout-main {
+    padding: 15px 10px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .notification-icon {
+    font-size: 20px;
+  }
+  
+  .layout-main-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-main {
+    padding: 10px 5px;
+  }
+  
+  .layout-main-content {
+    padding: 15px;
+    border-radius: 6px;
+  }
+  
+  .logo h2 {
+    font-size: 16px;
+  }
+  
+  .layout-header {
+    padding: 0 10px;
+  }
+  
+  .menu-toggle {
+    margin-right: 10px;
+  }
+  
+  .header-right {
+    gap: 10px;
+  }
 }
 </style>
