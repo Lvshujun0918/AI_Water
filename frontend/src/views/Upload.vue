@@ -12,11 +12,10 @@
           :model="uploadForm" 
           :rules="uploadRules" 
           ref="uploadFormRef"
-          label-width="120px"
           v-loading="uploading"
           element-loading-text="上传中..."
         >
-          <el-form-item label="选择音频文件" prop="audioFile">
+          <el-form-item prop="audioFile">
             <el-upload
               class="upload-demo"
               drag
@@ -38,24 +37,16 @@
             </el-upload>
           </el-form-item>
           
-          <el-form-item label="备注信息" prop="remark">
-            <el-input 
-              v-model="uploadForm.remark" 
-              type="textarea"
-              placeholder="请输入备注信息（可选）"
-              :rows="3"
-            />
-          </el-form-item>
-          
-          <el-form-item>
+          <el-form-item class="button-group">
             <el-button 
               type="primary" 
               @click="submitUpload"
               :disabled="!uploadForm.audioFile || uploading"
+              round
             >
               {{ uploading ? '上传中...' : '提交上传' }}
             </el-button>
-            <el-button @click="resetForm">重置</el-button>
+            <el-button @click="resetForm" round>重置</el-button>
           </el-form-item>
         </el-form>
         
@@ -68,14 +59,9 @@
             description="音频文件已成功处理，可以到记录管理页面查看详情。"
             show-icon
             closable
-            style="margin-top: 20px;"
           />
           
           <el-card v-else class="status-card">
-            <div class="status-header">
-              <h3>文件处理中</h3>
-            </div>
-            
             <div class="status-content">
               <el-progress 
                 :percentage="processingStatus.progress" 
@@ -88,6 +74,7 @@
                   :title="processingStatus.message"
                   type="error"
                   show-icon
+                  :closable="false"
                 />
                 <el-button @click="retryProcessing" type="primary" size="small" style="margin-top: 10px;">
                   重试处理
@@ -251,66 +238,6 @@ export default {
         }
         this.startStatusCheck(this.uploadedFile.id)
       }
-    },
-
-    async handleUpload() {
-      if (!this.selectedFile) {
-        this.$message.warning('请先选择文件')
-        return
-      }
-
-      const formData = new FormData()
-      formData.append('audio', this.selectedFile)
-
-      this.uploading = true
-      this.uploadProgress = 0
-
-      try {
-        // 模拟上传进度
-        const progressInterval = setInterval(() => {
-          if (this.uploadProgress < 90) {
-            this.uploadProgress += 10
-          }
-        }, 200)
-
-        const response = await apiClient.post('/upload-audio', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-
-        clearInterval(progressInterval)
-        this.uploadProgress = 100
-
-        if (response.data.success) {
-          this.$message.success('文件上传成功')
-          
-          // 添加通知
-          this.$parent.$refs.layout.addNotification(
-            '上传成功',
-            `文件 "${this.selectedFile.name}" 已成功上传，正在处理中...`,
-            'success'
-          )
-
-          // 重置表单
-          this.selectedFile = null
-          this.uploadProgress = 0
-          this.$refs.uploadForm.clearFiles()
-        } else {
-          this.$message.error(response.data.message || '上传失败')
-        }
-      } catch (error) {
-        this.$message.error('上传失败: ' + (error.response?.data?.message || error.message))
-        
-        // 添加错误通知
-        this.$parent.$refs.layout.addNotification(
-          '上传失败',
-          `文件 "${this.selectedFile.name}" 上传失败: ${error.response?.data?.message || error.message}`,
-          'error'
-        )
-      } finally {
-        this.uploading = false
-      }
     }
   }
 }
@@ -318,33 +245,45 @@ export default {
 
 <style scoped>
 .upload-container {
-  padding: 20px;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 0 20px;
 }
 
 .card-header {
   text-align: center;
+  padding: 10px 0;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
 }
 
 .upload-demo {
   width: 100%;
 }
 
-.processing-status {
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
   margin-top: 20px;
 }
 
-.status-card {
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
+.processing-status {
+  margin-top: 30px;
 }
 
-.status-header {
-  text-align: center;
-  margin-bottom: 20px;
+.status-card {
+  border: none;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 .status-content {
   text-align: center;
+  padding: 20px 0;
 }
 
 .status-message {
@@ -355,5 +294,10 @@ export default {
 
 .error-info {
   margin-top: 15px;
+}
+
+.el-upload__tip {
+  text-align: center;
+  margin-top: 10px;
 }
 </style>
