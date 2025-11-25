@@ -94,6 +94,9 @@ COPY --from=frontend-builder /app/frontend/dist /var/www/html
 # 复制Nginx配置
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# 安装 su-exec（轻量级权限切换工具）
+RUN apt-get update && apt-get install -y su-exec && rm -rf /var/lib/apt/lists/*
+
 # 复制启动脚本
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
@@ -139,8 +142,8 @@ RUN mkdir -p ./backend && \
     chown 1000:1000 ./backend/.env && \
     chmod 640 ./backend/.env
 
-# 切换为非 root 用户运行（镜像内的服务使用 appuser）
-USER appuser
+# 以 root 身份运行 entrypoint，它会修正权限后切换到 appuser
+USER root
 
 # 暴露端口 (Nginx端口)
 EXPOSE 80
