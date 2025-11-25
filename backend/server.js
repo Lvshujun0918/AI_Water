@@ -685,7 +685,8 @@ app.use((error, req, res, next) => {
 
   res.status(500).json({
     success: false,
-    message: '服务器内部错误'
+    code: error.code || 0,
+    message: error.message || '服务器内部错误'
   });
 });
 
