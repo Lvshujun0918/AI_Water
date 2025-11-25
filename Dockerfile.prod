@@ -94,9 +94,6 @@ COPY --from=frontend-builder /app/frontend/dist /var/www/html
 # 复制Nginx配置
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# 安装 su-exec（轻量级权限切换工具）
-RUN apt-get update && apt-get install -y su-exec && rm -rf /var/lib/apt/lists/*
-
 # 复制启动脚本
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
