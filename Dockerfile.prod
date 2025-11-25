@@ -100,7 +100,7 @@ RUN chmod +x /app/start.sh
 
 # 创建必要的目录和设置权限
 RUN mkdir -p \
-    backend/uploads \
+    /app/backend/uploads \
     /var/log/nginx \
     /var/lib/nginx/body \
     /var/run/nginx \
