@@ -7,6 +7,6 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./backend/uploads:/app/backend/uploads
+      - ./uploads:/app/backend/uploads
     environment:
       - NODE_ENV=production
