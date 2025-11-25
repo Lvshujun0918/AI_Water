@@ -269,52 +269,6 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// 注册接口（用于测试）
-app.post('/api/register', async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({
-      success: false,
-      message: '用户名和密码不能为空'
-    });
-  }
-
-  try {
-    // 加密密码
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 插入新用户
-    const insertQuery = `INSERT INTO users (username, password) VALUES (?, ?)`;
-    db.run(insertQuery, [username, hashedPassword], function (err) {
-      if (err) {
-        if (err.message.includes('UNIQUE constraint failed')) {
-          return res.status(400).json({
-            success: false,
-            message: '用户名已存在'
-          });
-        }
-
-        return res.status(500).json({
-          success: false,
-          message: '注册失败'
-        });
-      }
-
-      res.status(201).json({
-        success: true,
-        message: '注册成功',
-        userId: this.lastID
-      });
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: '服务器内部错误'
-    });
-  }
-});
-
 // 获取用户列表接口 - 需要认证
 app.get('/api/users', authenticateToken, (req, res) => {
   const query = `SELECT id, username, created_at FROM users ORDER BY id`;
