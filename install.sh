@@ -219,16 +219,7 @@ start_services() {
     echo -e "${YELLOW}=======================================================${NC}"
     echo
     
-    # 等待用户确认
-    read -p "$(echo -e ${YELLOW}"按 Enter 继续启动服务，或 Ctrl+C 取消..."${NC})" -n 1 -r
-    echo
-    
-    # 启动服务
-    if command -v docker-compose &> /dev/null; then
-        docker-compose up -d
-    else
-        docker compose up
-    fi
+    docker-compose up -d
 }
 
 # 显示完成信息
@@ -270,6 +261,7 @@ main() {
     start_services
     
     # 显示完成信息 (如果服务在前台运行，这里不会执行)
+    show_completion
 }
 
 # 信号处理
