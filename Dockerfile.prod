@@ -106,19 +106,17 @@ RUN mkdir -p \
     /app/backend/uploads \
     /var/log/nginx \
     /var/lib/nginx/body \
-    /var/run/nginx \
-    && chown -R www-data:www-data /var/log/nginx \
-    && chown -R www-data:www-data /var/lib/nginx \
-    && chown -R www-data:www-data /var/run/nginx \
-    && chown -R www-data:www-data /var/www/html \
-    && chown -R www-data:www-data /etc/nginx
+    /var/run/nginx
 
-# 创建非root用户
-#RUN groupadd -r appgroup && useradd -r -g appgroup appuser
-RUN chown -R www-data:www-data /app
-# 设置uploads目录权限为777，确保容器内外都能读写（因为docker-compose会映射主机目录）
+RUN groupadd -g 1000 appgroup && useradd -m -u 1000 -g 1000 appuser
+RUN chown -R 1000:1000 /app
 RUN chmod -R 777 backend/uploads
-RUN touch backend/users.db && chown www-data:www-data backend/users.db && chmod 666 backend/users.db
+RUN chown -R 1000:1000 /var/log/nginx \
+    && chown -R 1000:1000 /var/lib/nginx \
+    && chown -R 1000:1000 /var/run/nginx \
+    && chown -R 1000:1000 /var/www/html \
+    && chown -R 1000:1000 /etc/nginx
+RUN touch backend/users.db && chown 1000:1000 backend/users.db && chmod 666 backend/users.db
 
 # 添加构建参数（由 CI 传入）
 ARG BUILD_TIME=""
@@ -137,11 +135,11 @@ RUN mkdir -p ./backend && \
     echo "GIT_COMMIT=${GIT_COMMIT}" >> ./backend/.env && \
     echo "REFRESH_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env && \
     echo "ACCESS_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env && \
-    chown www-data:www-data ./backend/.env && \
+    chown 1000:1000 ./backend/.env && \
     chmod 640 ./backend/.env
 
-# 切换为非 root 用户运行（镜像内的服务使用 www-data）
-USER www-data
+# 切换为非 root 用户运行（镜像内的服务使用 appuser）
+USER appuser
 
 # 暴露端口 (Nginx端口)
 EXPOSE 80
