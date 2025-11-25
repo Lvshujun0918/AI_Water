@@ -113,7 +113,8 @@ RUN mkdir -p \
 # 创建非root用户
 #RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 RUN chown -R www-data:www-data /app
-RUN chown -R www-data:www-data backend/uploads
+RUN chmod -R 755 backend/uploads
+RUN touch backend/users.db && chown www-data:www-data backend/users.db && chmod 664 backend/users.db
 
 # 添加构建参数
 ARG BUILD_TIME
