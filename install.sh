@@ -127,7 +127,7 @@ download_compose_file() {
 
     if [ -f "$filename" ]; then
         log_warn "文件 $filename 已存在，创建备份..."
-        cp "$filename" "$filename.backup.$(date +%Y%m%d_%H%M%S)"
+        mv "$filename" "$filename.backup.$(date +%Y%m%d_%H%M%S)"
         log_success "备份创建完成"
     fi
     
