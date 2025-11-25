@@ -116,19 +116,27 @@ RUN chown -R www-data:www-data /app
 RUN chmod -R 755 backend/uploads
 RUN touch backend/users.db && chown www-data:www-data backend/users.db && chmod 664 backend/users.db
 
-# 添加构建参数
-ARG BUILD_TIME
-ARG VERSION
+# 添加构建参数（由 CI 传入）
+ARG BUILD_TIME=""
+ARG VERSION=""
+ARG GIT_COMMIT=""
 
-# 设置环境变量
+# 将构建参数导出为环境变量（便于在镜像运行时可见）
+ENV BUILD_TIME=${BUILD_TIME}
 ENV VERSION=${VERSION}
 ENV GIT_COMMIT=${GIT_COMMIT}
 
-# 生成随机密钥
-RUN echo "BUILD_TIME=$(date)" > ./backend/.env
-RUN echo "REFRESH_TOKEN_SECRET=$(openssl rand -hex 32)" > ./backend/.env
-RUN echo "ACCESS_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env
+# 生成并写入后端环境文件（包含构建信息与随机密钥）
+RUN mkdir -p ./backend && \
+    echo "BUILD_TIME=${BUILD_TIME}" > ./backend/.env && \
+    echo "VERSION=${VERSION}" >> ./backend/.env && \
+    echo "GIT_COMMIT=${GIT_COMMIT}" >> ./backend/.env && \
+    echo "REFRESH_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env && \
+    echo "ACCESS_TOKEN_SECRET=$(openssl rand -hex 32)" >> ./backend/.env && \
+    chown www-data:www-data ./backend/.env && \
+    chmod 640 ./backend/.env
 
+# 切换为非 root 用户运行（镜像内的服务使用 www-data）
 USER www-data
 
 # 暴露端口 (Nginx端口)
