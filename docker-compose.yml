@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     image: ghcr.io/lvshujun0918/ai_water:main
+    user: "1000:1000"
     ports:
       - "8080:80"
     volumes:
