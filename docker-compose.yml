@@ -7,6 +7,5 @@ services:
       - "8080:80"
     volumes:
       - ./backend/uploads:/app/backend/uploads
-      - ./backend/users.db:/app/backend/users.db
     environment:
       - NODE_ENV=production
