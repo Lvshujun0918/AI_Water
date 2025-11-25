@@ -7,6 +7,10 @@ LICENSE
 .env
 .DS_Store
 *.md
+install.sh
+LICENSE
+README.md
+README.DOCKER.md
 
 # Frontend specific
 frontend/node_modules
