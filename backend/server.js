@@ -644,15 +644,49 @@ app.post('/api/upload-audio', authenticateToken, upload.single('audio'), (req, r
     });
   }
 
-  res.status(200).json({
-    success: true,
-    message: '音频文件上传成功',
-    file: {
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
+  const userId = req.user && req.user.id ? req.user.id : null;
+  const filePath = req.file.path;
+
+  // 保存文件信息到数据库
+  const insertQuery = `INSERT INTO audio_files 
+    (filename, original_name, mimetype, size, user_id, risk_level, confidence) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+  const params = [
+    req.file.filename,
+    req.file.originalname || '',
+    req.file.mimetype || 'audio',
+    req.file.size || 0,
+    userId,
+    '未检测',
+    0.0
+  ];
+
+  db.run(insertQuery, params, function (err) {
+    if (err) {
+      // 如果保存数据库失败，删除已上传的文件
+      try { fs.unlinkSync(filePath); } catch (e) {}
+      return res.status(500).json({
+        success: false,
+        message: '文件信息保存失败'
+      });
     }
+
+    // 异步处理音频文件，不阻塞响应
+    processAudioFile(filePath, this.lastID).catch(error => {
+      console.error('音频处理失败:', error);
+    });
+
+    res.status(200).json({
+      success: true,
+      message: '音频文件上传成功',
+      file: {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+      }
+    });
   });
 });
 
@@ -693,52 +727,4 @@ app.use((error, req, res, next) => {
 // 启动服务器
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`后端服务器正在运行，端口: ${PORT}`);
-
-  const watcher = chokidar.watch('./uploads', {
-    ignored: /(^|[\/\\])\../, // 忽略隐藏文件
-    persistent: true,
-    ignoreInitial: true // 忽略初始文件
-  });
-
-  watcher
-    .on('all', (event, filePath) => {
-      console.log(`文件${event}: ${filePath}`);
-          
-      // 获取用户ID（实际项目中应从认证信息中获取）
-      const userId = 1;
-
-      // 保存文件信息到数据库
-      const insertQuery = `INSERT INTO audio_files 
-        (filename, original_name, mimetype, size, user_id, risk_level, confidence) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-      // 默认风险等级为"未知"，置信度为0.0
-      const params = [
-        path.basename(filePath),
-        '',
-        'audio',
-        0,
-        userId,
-        '未检测',
-        0.0
-      ];
-
-      db.run(insertQuery, params, function (err) {
-        if (err) {
-          // 如果保存数据库失败，删除已上传的文件
-          fs.unlinkSync(filePath);
-          return res.status(500).json({
-            success: false,
-            message: '文件上传失败'
-          });
-        }
-        processAudioFile(filePath,this.lastID);
-      });
-      
-    })
-    .on('error', error => {
-      console.error(`监控错误: ${error}`);
-    });
-
-  console.log(`开始监控目录: ./uploads`);
 });
