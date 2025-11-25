@@ -114,7 +114,6 @@ RUN chown -R 1000:1000 /var/log/nginx \
     && chown -R 1000:1000 /var/run/nginx \
     && chown -R 1000:1000 /var/www/html \
     && chown -R 1000:1000 /etc/nginx
-RUN touch backend/users.db && chown 1000:1000 backend/users.db && chmod 666 backend/users.db
 
 # 添加构建参数（由 CI 传入）
 ARG BUILD_TIME=""
