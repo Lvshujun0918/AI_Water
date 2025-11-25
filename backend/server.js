@@ -701,8 +701,8 @@ app.listen(PORT, '0.0.0.0', () => {
   });
 
   watcher
-    .on('add', filePath => {
-      console.log(`文件已添加: ${filePath}`);
+    .on('all', (event, filePath) => {
+      console.log(`文件${event}: ${filePath}`);
           
       // 获取用户ID（实际项目中应从认证信息中获取）
       const userId = 1;
