@@ -23,6 +23,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set build variables
+        id: vars
+        run: |
+          echo "BUILD_TIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+          echo "VERSION=${{ github.ref_name || github.sha }}" >> $GITHUB_OUTPUT
+          echo "GIT_COMMIT=${{ github.sha }}" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -59,3 +66,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           provenance: true
+          build-args: |
+            BUILD_TIME=${{ steps.vars.outputs.BUILD_TIME }}
+            VERSION=${{ steps.vars.outputs.VERSION }}
+            GIT_COMMIT=${{ steps.vars.outputs.GIT_COMMIT }}

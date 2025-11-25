@@ -6,7 +6,6 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./backend/uploads:/app/backend/uploads
-      - ./backend/users.db:/app/backend/users.db
+      - ./backend:/app/backend
     environment:
       - NODE_ENV=production
