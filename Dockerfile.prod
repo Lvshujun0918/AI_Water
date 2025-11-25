@@ -108,7 +108,8 @@ RUN mkdir -p \
     /var/lib/nginx/body \
     /var/run/nginx
 
-RUN groupadd -g 1000 appgroup && useradd -m -u 1000 -g 1000 appuser
+RUN if ! getent group 1000 >/dev/null 2>&1; then groupadd -g 1000 appgroup; fi && \
+    if ! id -u 1000 >/dev/null 2>&1; then useradd -m -u 1000 -g 1000 appuser; fi
 RUN chown -R 1000:1000 /app
 RUN chmod -R 777 backend/uploads
 RUN chown -R 1000:1000 /var/log/nginx \
