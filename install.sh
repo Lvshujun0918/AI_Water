@@ -125,6 +125,11 @@ download_compose_file() {
     mkdir -p ./uploads
     chmod -R 777 ./uploads
 
+    #以777权限创建目录uploads
+    mkdir -p ./db
+    chmod -R 777 ./db
+    touch ./db/users.db
+
     if [ -f "$filename" ]; then
         log_warn "文件 $filename 已存在，创建备份..."
         mv "$filename" "$filename.backup.$(date +%Y%m%d_%H%M%S)"
@@ -185,6 +190,13 @@ validate_compose_file() {
             echo -e "  ${GREEN}•${NC} $service"
         done
     fi
+}
+
+# 拉取镜像
+fetch_images() {
+    log_step "拉取 Docker 镜像..."
+    docker pull $(grep -oP '(?<=image: ).*' docker-compose.yml | tr '\n' ' ')
+    log_success "镜像拉取完成"
 }
 
 # 显示系统信息
@@ -256,6 +268,9 @@ main() {
     
     # 验证配置文件
     validate_compose_file
+
+    # 拉取镜像
+    fetch_images
     
     # 启动服务
     start_services
