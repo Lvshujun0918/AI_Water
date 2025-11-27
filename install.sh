@@ -121,7 +121,7 @@ download_compose_file() {
     log_step "下载 Docker Compose 配置文件..."
     log_info "URL: $url"
 
-    #以777权限创建目录uploads和users.db文件
+    #以777权限创建目录uploads
     mkdir -p ./uploads
     chmod -R 777 ./uploads
 
