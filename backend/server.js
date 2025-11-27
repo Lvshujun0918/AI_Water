@@ -86,7 +86,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads')); // 提供静态文件访问
 
 // 初始化 SQLite 数据库
-const db = new sqlite3.Database('./db/users.db', (err) => {
+const db = new sqlite3.Database(path.join(__dirname, 'db/users.db'), (err) => {
   if (err) {
     console.error('无法连接到 SQLite 数据库:', err.message);
   } else {
