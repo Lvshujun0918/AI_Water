@@ -526,65 +526,74 @@ function processAudioFile(file,id) {
       progress: 30,
       message: '正在加载模型'
     });
+    try { 
+    
+      // 调用Python脚本进行预测
+      PythonShell.run('predict.py', options).then(results => {
 
-    // 调用Python脚本进行预测
-    PythonShell.run('predict.py', options).then(results => {
-
-      // 解析Python脚本返回的JSON结果
-      const prediction = JSON.parse(results[0]);
-      console.log('Prediction result:', prediction);
-      // 更新处理状态
-      processingStatus.set(audioFile.id, {
-        status: 'processing',
-        progress: 80,
-        message: '正在保存结果到数据库'
-      });
-      
-      if (prediction.error) {
-        processingStatus.set(path.basename(file), {
-          status: 'error',
-          progress: 0,
-          message: prediction.error
+        // 解析Python脚本返回的JSON结果
+        const prediction = JSON.parse(results[0]);
+        console.log('Prediction result:', prediction);
+        // 更新处理状态
+        processingStatus.set(audioFile.id, {
+          status: 'processing',
+          progress: 80,
+          message: '正在保存结果到数据库'
         });
-        console.error('预测出错:', prediction.error);
-        return reject(new Error(prediction.error));
-      }
-
-      // 更新数据库中的预测结果
-      const updateQuery = `
-        UPDATE audio_files 
-        SET risk_level = ?, confidence = ? 
-        WHERE id = ?
-      `;
-      
-      db.run(updateQuery, [
-        prediction.risk_level, 
-        prediction.confidence, 
-        audioFile.id
-      ], function(err) {
-        if (err) {
+        
+        if (prediction.error) {
           processingStatus.set(path.basename(file), {
             status: 'error',
             progress: 0,
-            message: '更新数据库失败'
+            message: prediction.error
           });
-          console.error('更新数据库失败:', err);
-          return reject(err);
+          console.error('预测出错:', prediction.error);
+          return reject(new Error(prediction.error));
         }
+
+        // 更新数据库中的预测结果
+        const updateQuery = `
+          UPDATE audio_files 
+          SET risk_level = ?, confidence = ? 
+          WHERE id = ?
+        `;
         
-        // 更新处理状态为完成
-        processingStatus.set(path.basename(file), {
-          status: 'completed',
-          progress: 100,
-          message: '处理完成',
-          result: prediction
+        db.run(updateQuery, [
+          prediction.risk_level, 
+          prediction.confidence, 
+          audioFile.id
+        ], function(err) {
+          if (err) {
+            processingStatus.set(path.basename(file), {
+              status: 'error',
+              progress: 0,
+              message: '更新数据库失败'
+            });
+            console.error('更新数据库失败:', err);
+            return reject(err);
+          }
+          
+          // 更新处理状态为完成
+          processingStatus.set(path.basename(file), {
+            status: 'completed',
+            progress: 100,
+            message: '处理完成',
+            result: prediction
+          });
+          
+          console.log(`音频文件 ${audioFile.filename} 处理完成:`, prediction);
+          resolve(prediction);
         });
-        
-        console.log(`音频文件 ${audioFile.filename} 处理完成:`, prediction);
-        resolve(prediction);
       });
-    });
-    
+    } catch (error) {
+      console.error('Python处理出错:', error);
+      processingStatus.set(path.basename(file), {
+        status: 'error',
+        progress: 0,
+        message: 'Python处理出错'
+      });
+      return reject(new Error('Python处理出错'));
+    }
   });
 }
 
