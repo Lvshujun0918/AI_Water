@@ -115,6 +115,31 @@ check_dependencies() {
     fi
 }
 
+directory_check() {
+    log_step "检查工作目录..."
+    
+    if [ -d "uploads" ]; then
+        log_warn "目录uploads已存在，将不再创建"
+        chmod -R 777 ./uploads
+    else
+        log_info "创建所需uploads目录..."
+        #以777权限创建目录uploads
+        mkdir -p ./uploads
+        chmod -R 777 ./uploads
+    fi
+    
+    if [ -d "db" ]; then
+        log_warn "目录db已存在，将不再创建"
+        chmod -R 777 ./db
+    else
+        log_info "创建所需db目录..."
+        #以777权限创建目录uploads
+        mkdir -p ./db
+        touch ./db/users.db
+        chmod -R 777 ./db
+    fi    
+}
+
 # 下载 docker-compose.yml
 download_compose_file() {
     local url="https://raw.githubusercontent.com/Lvshujun0918/AI_Water/refs/heads/main/docker-compose.yml"
@@ -122,15 +147,6 @@ download_compose_file() {
     
     log_step "下载 Docker Compose 配置文件..."
     log_info "URL: $url"
-
-    #以777权限创建目录uploads
-    mkdir -p ./uploads
-    chmod -R 777 ./uploads
-
-    #以777权限创建目录uploads
-    mkdir -p ./db
-    chmod -R 777 ./db
-    touch ./db/users.db
 
     if [ -f "$filename" ]; then
         log_warn "文件 $filename 已存在，创建备份..."
@@ -264,6 +280,9 @@ main() {
     
     # 显示系统信息
     show_system_info
+
+    # 创建目录
+    directory_check
     
     # 下载配置文件
     download_compose_file
