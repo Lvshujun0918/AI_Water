@@ -60,6 +60,8 @@ print_banner() {
     echo -e "${YELLOW}脚本开始时间: $(date)${NC}"
     echo -e "${YELLOW}=======================================================${NC}"
     echo
+    mkdir -p ./ai-aiwater
+    cd ./ai-aiwater
 }
 
 # 检查依赖
