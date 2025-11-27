@@ -135,7 +135,6 @@ directory_check() {
         log_info "创建所需db目录..."
         #以777权限创建目录uploads
         mkdir -p ./db
-        touch ./db/users.db
         chmod -R 777 ./db
     fi    
 }
