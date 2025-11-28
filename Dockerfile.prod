@@ -1,25 +1,4 @@
-# 多阶段构建 - 构建前端
-FROM node:16-bullseye-slim AS frontend-builder
-
-# 安装git（某些npm包可能需要）
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-
-# 设置工作目录
-WORKDIR /app
-
-# 复制前端依赖文件
-COPY frontend/package*.json ./frontend/
-
-# 安装前端依赖（包括开发依赖，因为需要构建）
-RUN cd frontend && npm ci
-
-# 复制前端源代码
-COPY frontend/. ./frontend/
-
-# 构建前端应用
-RUN cd frontend && npm run build
-
-# 多阶段构建 - 生产环境
+# 前端静态文件由 CI 在工作区生成到 `frontend/dist`，Dockerfile 直接复制
 FROM ubuntu:24.04
 
 # 避免交互式安装
@@ -88,8 +67,8 @@ RUN cd backend && npm install --only=production
 # 复制后端源代码
 COPY backend/. ./backend/
 
-# 复制构建好的前端静态文件到Nginx目录
-COPY --from=frontend-builder /app/frontend/dist /var/www/html
+# 复制 CI 生成的前端静态文件到 Nginx 目录
+COPY frontend/dist /var/www/html
 
 # 复制Nginx配置
 COPY nginx.conf /etc/nginx/nginx.conf

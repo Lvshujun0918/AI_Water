@@ -11,7 +11,7 @@ jobs:
   build-and-push-riscv:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
       attestations: write
       id-token: write
@@ -19,6 +19,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Set up Node.js for frontend build
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
 
       - name: Set build variables
         id: vars
@@ -26,6 +37,12 @@ jobs:
           echo "BUILD_TIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
           echo "VERSION=${{ github.ref_name || github.sha }}" >> $GITHUB_OUTPUT
           echo "GIT_COMMIT=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Set explicit image tag
+        id: imagetag
+        run: |
+          echo "IMAGE_BASE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-riscv" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-riscv:riscv64-${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -60,7 +77,9 @@ jobs:
           context: .
           file: ./Dockerfile.prod
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ steps.imagetag.outputs.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
