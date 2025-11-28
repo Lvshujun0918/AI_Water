@@ -5,7 +5,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ai-water
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-riscv:
@@ -38,11 +38,16 @@ jobs:
           echo "VERSION=${{ github.ref_name || github.sha }}" >> $GITHUB_OUTPUT
           echo "GIT_COMMIT=${{ github.sha }}" >> $GITHUB_OUTPUT
 
+      - name: Normalize repository name (lowercase)
+        id: norm
+        run: |
+          echo "IMAGE_NAME_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Set explicit image tag
         id: imagetag
         run: |
-          echo "IMAGE_BASE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-riscv" >> $GITHUB_OUTPUT
-          echo "IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-riscv:riscv64-${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo "IMAGE_BASE=${{ env.REGISTRY }}/${{ steps.norm.outputs.IMAGE_NAME_LOWER }}-riscv" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=${{ env.REGISTRY }}/${{ steps.norm.outputs.IMAGE_NAME_LOWER }}-riscv:riscv64-${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -61,7 +66,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-riscv
+          images: ${{ env.REGISTRY }}/${{ steps.norm.outputs.IMAGE_NAME_LOWER }}-riscv
           tags: |
             type=ref,event=branch
             type=ref,event=pr
