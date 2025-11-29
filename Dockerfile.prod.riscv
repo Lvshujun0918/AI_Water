@@ -12,8 +12,7 @@ RUN apt-get update && apt-get install -y nginx curl bash
 RUN apt-get install -y nodejs npm
 
 #python311安装
-RUN apt update && \
-        apt install python3-virtualenv
+RUN apt-get update && apt-get install python3-virtualenv
 
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
