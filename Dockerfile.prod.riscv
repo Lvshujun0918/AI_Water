@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN virtualenv aiwater
 
 # 激活虚拟环境并升级pip
-RUN source aiwater/bin/activate
+RUN . aiwater/bin/activate
 
 # 安装PyTorch CPU版本
 RUN pip3 install --no-cache-dir \
