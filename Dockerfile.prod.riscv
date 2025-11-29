@@ -13,14 +13,7 @@ RUN apt-get install -y nodejs npm
 
 #python311安装
 RUN apt update && \
-        apt install software-properties-common -y
-RUN add-apt-repository ppa:deadsnakes/ppa
-
-RUN apt update --fix-missing && \
-        apt install python3.11 python3.11-distutils python3.11-dev python3.11-venv -y && \
-        apt install python3-pip -y && \
-        ln -sf /usr/bin/python3.11 /usr/bin/python && \
-        ln -sf /usr/bin/pip3 /usr/bin/pip
+        apt install python3-virtualenv
 
 # 设置Python环境变量
 ENV PYTHONUNBUFFERED=1
@@ -35,11 +28,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # 创建Python虚拟环境
-RUN python3.11 -m venv /opt/venv
+RUN virtualenv aiwater
 
 # 激活虚拟环境并升级pip
-ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --upgrade pip
+ENV source aiwater/bin/activate
 
 # 安装PyTorch CPU版本
 RUN pip3 install --no-cache-dir \
