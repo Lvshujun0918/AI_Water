@@ -16,7 +16,6 @@ chmod +x frpc
 cat > frpc.toml << EOF
 serverAddr = "43.248.9.3"
 serverPort = 7000
-auth.token = "token123456"
 
 [[proxies]]
 name = "ssh"
