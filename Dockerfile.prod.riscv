@@ -40,12 +40,12 @@ RUN pip install --no-cache-dir \
     torch \
     torchvision \
     torchaudio \
-    --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
+    --index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
 
 # 安装macls及其依赖
 RUN pip install --no-cache-dir \
     numba \
-    llvmlite --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
+    llvmlite --index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
 
 RUN git clone https://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
