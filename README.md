@@ -74,6 +74,12 @@ cd AudioClassification-Pytorch/
 pip install .
 ```
 
+## DockerCompose一键安装脚本
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Lvshujun0918/AI_Water/refs/heads/main/install.sh | bash
+```
+
 ## 安装和启动
 
 ### 1. 克隆项目
