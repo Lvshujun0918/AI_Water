@@ -35,17 +35,21 @@ RUN virtualenv aiwater
 # 激活虚拟环境并升级pip
 RUN . aiwater/bin/activate
 
-# 安装PyTorch CPU版本
-RUN pip install --no-cache-dir \
-    torch \
-    torchvision \
-    torchaudio \
-    --index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
+# pip手动安装
+RUN wget https://git.spacemit.com/api/v4/projects/33/packages/pypi/files/c0c8516a038f7f661331b6a45ad37d8c0c69aea3000e1263d3fd0e3573e59aa9/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl
+RUN pip install torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-# 安装macls及其依赖
-RUN pip install --no-cache-dir \
-    numba \
-    llvmlite --index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --break-system-packages
+RUN wget https://git.spacemit.com/api/v4/projects/33/packages/pypi/files/35c8f0f55839a7c26f3680bbef82b2bcd78f7e50696ac082a7360b520cbb588b/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl
+RUN pip install torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl --break-system-packages
+
+RUN wget https://git.spacemit.com/api/v4/projects/33/packages/pypi/files/d846309733d7ee8445cc9ce3ecddf836844f719e40db8b5dcf5027ec749158d2/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl
+RUN pip install torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl --break-system-packages
+
+RUN wget https://git.spacemit.com/api/v4/projects/33/packages/pypi/files/ab9e66628513af9f85113bbe8dee1080256a68243dacf6614e9009c241721cc1/numba-0.62.1-cp312-cp312-linux_riscv64.whl
+RUN pip install numba-0.62.1-cp312-cp312-linux_riscv64.whl --break-system-packages
+
+RUN wget https://git.spacemit.com/api/v4/projects/33/packages/pypi/files/3280edd02975ba49e9cbb87b161aaab4c485bc96df22327ef8c0e45c9f07d246/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl
+RUN pip install llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl --break-system-packages
 
 RUN git clone https://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
