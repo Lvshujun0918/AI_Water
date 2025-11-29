@@ -33,14 +33,14 @@ RUN virtualenv aiwater
 RUN . aiwater/bin/activate
 
 # 安装PyTorch CPU版本
-RUN pip3 install --no-cache-dir \
+RUN pip install --no-cache-dir \
     torch \
     torchvision \
     torchaudio \
     --index-url https://download.pytorch.org/whl/cpu --break-system-packages
 
 # 安装macls及其依赖
-RUN pip3 install --no-cache-dir \
+RUN pip install --no-cache-dir \
     numba \
     llvmlite \
     macls --break-system-packages
