@@ -29,6 +29,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    openssl \
+    python3-openssl \
+ && update-ca-certificates
+
 # 创建Python虚拟环境
 RUN virtualenv aiwater
 
