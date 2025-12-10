@@ -36,19 +36,19 @@ RUN virtualenv aiwater
 RUN . aiwater/bin/activate
 
 # pip手动安装
-RUN wget --no-check-certificate https://static.cszj.wang/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl
+RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl
 RUN pip install torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://static.cszj.wang/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl
+RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl
 RUN pip install torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://static.cszj.wang/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl
+RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl
 RUN pip install torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://static.cszj.wang/numba-0.62.1-cp312-cp312-linux_riscv64.whl
+RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/numba-0.62.1-cp312-cp312-linux_riscv64.whl
 RUN pip install numba-0.62.1-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://static.cszj.wang/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl
+RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl
 RUN pip install llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl --break-system-packages
 
 RUN git clone http://github.com/yeyupiaoling/AudioClassification-Pytorch.git
