@@ -44,15 +44,15 @@ COPY whl/*.whl ./whl/
 
 RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
-RUN pip install torch==2.8.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torch==2.8.0 --break-system-packages
 
-RUN pip install torchvision==0.23.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchvision==0.23.0 --break-system-packages
 
-RUN pip install torchaudio==2.8.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchaudio==2.8.0 --break-system-packages
 
-RUN pip install numba==0.62.1 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com numba==0.62.1 --break-system-packages
 
-RUN pip install llvmlite==0.45.1 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
 
 RUN git clone http://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
