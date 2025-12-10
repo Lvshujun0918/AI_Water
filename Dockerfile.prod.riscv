@@ -35,28 +35,25 @@ RUN virtualenv aiwater
 # 激活虚拟环境并升级pip
 RUN . aiwater/bin/activate
 
+# 设置工作目录
+WORKDIR /app
+
+COPY whl/*.whl ./whl/
+
 # pip手动安装
-RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl
-RUN pip install torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install ./whl/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl
-RUN pip install torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl --break-system-packages
+RUN pip install ./whl/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl
-RUN pip install torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install ./whl/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/numba-0.62.1-cp312-cp312-linux_riscv64.whl
-RUN pip install numba-0.62.1-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install ./whl/numba-0.62.1-cp312-cp312-linux_riscv64.whl --break-system-packages
 
-RUN wget --no-check-certificate https://github.com/Lvshujun0918/AI_Water/raw/refs/heads/main/whl/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl
-RUN pip install llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install ./whl/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl --break-system-packages
 
 RUN git clone http://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
 RUN pip install .
-
-# 设置工作目录
-WORKDIR /app
 
 # 复制后端依赖文件
 COPY backend/package*.json ./backend/
