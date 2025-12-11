@@ -44,7 +44,7 @@ RUN . aiwater/bin/activate
 # 设置工作目录
 WORKDIR /app
 
-COPY whl/. ./whl/
+COPY whl/ ./whl/
 
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
