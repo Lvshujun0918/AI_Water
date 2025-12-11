@@ -61,9 +61,7 @@ RUN pip install --trusted-host git.spacemit.com numba==0.62.1 --break-system-pac
 
 RUN pip install --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
 
-RUN cd ./whl/AudioClassification-Pytorch/
-RUN ls -lh
-RUN pip install . --break-system-packages
+RUN pip install ./whl/AudioClassification-Pytorch/ --break-system-packages
 
 # 复制后端依赖文件
 COPY backend/package*.json ./backend/
