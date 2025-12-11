@@ -47,7 +47,7 @@ WORKDIR /app
 COPY whl/*.whl ./whl/
 
 # pip手动安装
-RUN pip install --upgrade pip setuptools --break-system-packages
+RUN pip install --upgrade setuptools --break-system-packages
 
 RUN pip install ./whl/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
 
