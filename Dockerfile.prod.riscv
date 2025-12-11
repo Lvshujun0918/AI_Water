@@ -49,15 +49,17 @@ COPY whl/*.whl ./whl/
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
 
-RUN pip install ./whl/torch-2.8.0+spacemit.0-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
-RUN pip install ./whl/torchvision-0.23.0-cp313-cp313-manylinux_2_39_riscv64.whl --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torch==2.8.0 --break-system-packages
 
-RUN pip install ./whl/torchaudio-2.8.0-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchvision==0.23.0 --break-system-packages
 
-RUN pip install ./whl/numba-0.62.1-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchaudio==2.8.0 --break-system-packages
 
-RUN pip install ./whl/llvmlite-0.45.1-cp312-cp312-linux_riscv64.whl --break-system-packages
+RUN pip install --trusted-host git.spacemit.com numba==0.62.1 --break-system-packages
+
+RUN pip install --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
 
 RUN git clone http://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
