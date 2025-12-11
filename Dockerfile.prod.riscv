@@ -44,7 +44,7 @@ RUN . aiwater/bin/activate
 # 设置工作目录
 WORKDIR /app
 
-COPY whl/. ./whl/
+COPY whl/ ./whl/
 
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
@@ -61,7 +61,7 @@ RUN pip install --trusted-host git.spacemit.com numba==0.62.1 --break-system-pac
 
 RUN pip install --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
 
-RUN cd AudioClassification-Pytorch/
+RUN cd ./whl/AudioClassification-Pytorch/
 RUN ls -lh
 RUN pip install . --break-system-packages
 
