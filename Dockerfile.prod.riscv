@@ -63,7 +63,7 @@ RUN pip install --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-
 
 RUN git clone http://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 RUN cd AudioClassification-Pytorch/
-RUN pip install .
+RUN pip install . --break-system-packages
 
 # 复制后端依赖文件
 COPY backend/package*.json ./backend/
