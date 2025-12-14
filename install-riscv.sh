@@ -223,7 +223,7 @@ show_system_info() {
     # Docker 信息
     log_info "Docker 版本: $(docker --version | cut -d' ' -f3 | cut -d',' -f1)"
     
-    if command -v docker-compose &> /dev/null; then
+    if command -v docker compose &> /dev/null; then
         log_info "Docker Compose 版本: $(docker-compose --version | cut -d' ' -f3 | cut -d',' -f1)"
     else
         log_info "Docker Compose 版本: $(docker compose version --short)"
@@ -248,7 +248,7 @@ start_services() {
     echo -e "${YELLOW}=======================================================${NC}"
     echo
     
-    docker-compose up -d
+    docker compose up -d
 }
 
 # 显示完成信息
