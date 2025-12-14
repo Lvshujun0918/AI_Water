@@ -1,0 +1,11 @@
+services:
+  app:
+    image: ghcr.io/lvshujun0918/ai_water-riscv:main
+    user: "1000:1000"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./uploads:/app/backend/uploads
+      - ./db:/app/backend/db
+    environment:
+      - NODE_ENV=production
