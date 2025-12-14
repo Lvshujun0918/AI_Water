@@ -85,8 +85,8 @@ check_dependencies() {
     fi
     
     # 检查 docker-compose
-    if ! command -v docker-compose &> /dev/null; then
-        missing_deps+=("docker-compose")
+    if ! command -v docker compose &> /dev/null; then
+        missing_deps+=("docker compose")
     else
         log_success "Docker Compose 已安装"
     fi
