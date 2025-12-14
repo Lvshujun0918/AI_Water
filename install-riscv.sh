@@ -189,8 +189,8 @@ validate_compose_file() {
     fi
     
     # 尝试解析 YAML
-    if command -v docker-compose &> /dev/null; then
-        if docker-compose config -q &> /dev/null; then
+    if command -v docker compose &> /dev/null; then
+        if docker compose config -q &> /dev/null; then
             log_success "Docker Compose 文件语法正确"
         else
             log_error "Docker Compose 文件语法错误"
@@ -202,8 +202,8 @@ validate_compose_file() {
     
     # 显示服务信息
     log_info "检测到的服务:"
-    if command -v docker-compose &> /dev/null; then
-        docker-compose config --services | while read service; do
+    if command -v docker compose &> /dev/null; then
+        docker compose config --services | while read service; do
             echo -e "  ${GREEN}•${NC} $service"
         done
     fi
