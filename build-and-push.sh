@@ -8,8 +8,8 @@ set -e
 
 # 配置
 REGISTRY="ghcr.io"
-GITHUB_USER="${GITHUB_USER:-Lvshujun0918}"
-IMAGE_NAME="${IMAGE_NAME:-ai_water}"
+GITHUB_USER="${GITHUB_USER:-lvshujun0918}"
+IMAGE_NAME="${IMAGE_NAME:-ai_water-riscv}"
 DOCKERFILE_PROD="${DOCKERFILE_PROD:-Dockerfile.prod.riscv}"
 FRONTEND_DIR="${FRONTEND_DIR:-frontend}"
 ARCH="riscv64"
@@ -87,7 +87,7 @@ EOF
 }
 
 # 解析命令行参数
-TAG="latest"
+TAG="latest-riscv"
 VERSION="0.1.0"
 PUSH=false
 BUILD_ONLY=false
@@ -148,7 +148,7 @@ IMAGE_NAME_LOWER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
 # 镜像完整名称
 FULL_IMAGE_NAME="$REGISTRY/$GITHUB_USER/$IMAGE_NAME_LOWER"
 IMAGE_TAG="$FULL_IMAGE_NAME:$TAG"
-RISCV_TAG="$FULL_IMAGE_NAME:$ARCH-$GIT_COMMIT"
+RISCV_TAG="$FULL_IMAGE_NAME:main-$GIT_COMMIT"
 
 log_step "Docker镜像构建脚本 - RISC-V 64位"
 
