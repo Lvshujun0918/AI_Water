@@ -1,6 +1,6 @@
 # AI智慧水务检漏系统
 
-基于 Element UI 和 Vue3 构建的水务管网漏水音频识别后台管理系统，用于管理和分析上传的音频文件，及时发现漏水点，解放人类手动检测的耗时和误差。系统使用机器学习模型对音频进行分类和风险评估。
+基于 Vue3 + Element Plus 构建的水务管网漏水音频识别后台管理系统，用于管理和分析上传的音频文件，及时发现漏水点，解放人类手动检测的耗时和误差。系统使用深度学习模型对音频进行分类和风险评估。
 
 ## 项目截图
 <img width="2550" height="2480" alt="image" src="https://github.com/user-attachments/assets/d73a9274-dea6-4e46-aef2-9cdfaa044c22" />
@@ -10,177 +10,474 @@
 
 ## 项目概述
 
-这是一个前后端分离的管理系统，前端使用 Vue3 + Element Plus 构建用户界面，后端使用 Node.js + Express 提供 API 服务，并通过 Python 机器学习模型进行音频分类识别。
+这是一个前后端分离的管理系统，采用现代化技术栈：
+
+- **前端**：Vue3 + Element Plus + Vite 构建响应式用户界面
+- **后端**：Node.js + Express 提供 RESTful API 服务
+- **AI 模型**：Python + PyTorch 进行音频分类识别
 
 ### 主要功能
 
-- 用户认证和权限管理
-- 音频文件上传和管理
-- 基于 AI 模型的音频风险评估
-- 数据可视化展示
-- 系统初始化和管理员设置
+- ✅ 用户认证和权限管理
+- ✅ 音频文件上传和管理
+- ✅ 基于 AI 模型的音频风险评估
+- ✅ 数据可视化展示（仪表板、趋势分析）
+- ✅ 系统初始化和管理员设置
+- ✅ 音频记录查询和历史分析
 
 ## 技术架构
 
 ### 前端技术栈
 
-- Vue 3 - 渐进式 JavaScript 框架
-- Element Plus - Vue 3 组件库
-- Vue Router - 路由管理
-- Axios - HTTP 客户端
-- ECharts - 数据可视化
-- Vite - 构建工具
+| 技术 | 说明 |
+|------|------|
+| Vue 3 | 渐进式 JavaScript 框架 |
+| Element Plus | 基于 Vue 3 的组件库 |
+| Vue Router | 路由管理 |
+| Axios | HTTP 客户端 |
+| ECharts | 数据可视化库 |
+| Vite | 构建工具 |
 
 ### 后端技术栈
 
-- Node.js - JavaScript 运行时
-- Express - Web 应用框架
-- SQLite - 轻量级数据库
-- BCrypt - 密码加密
-- JWT - JSON Web Token 认证
-- Multer - 文件上传处理
-- Python Shell - Python 脚本执行
+| 技术 | 说明 |
+|------|------|
+| Node.js | JavaScript 运行时环境 |
+| Express | Web 应用框架 |
+| SQLite | 轻量级数据库 |
+| BCrypt | 密码加密库 |
+| JWT | JSON Web Token 认证 |
+| Multer | 文件上传中间件 |
+| Python Shell | Python 脚本执行 |
 
-### Python 依赖
+### AI 模型依赖
 
-- PyTorch - 机器学习框架
-- macls - 音频分类库
-- numpy, scipy 等科学计算库
+| 库 | 说明 |
+|------|------|
+| PyTorch | 深度学习框架 |
+| macls | 音频分类库 |
+| torchaudio | 音频处理库 |
+| numpy / scipy | 科学计算库 |
 
 ## 环境要求
 
 ### 基础环境
 
-- Node.js >= 14.x
-- Python >= 3.8
-- npm >= 6.x
+- **Node.js** >= 18.x (推荐使用 LTS 版本)
+- **Python** >= 3.8
+- **npm** >= 9.x
+- **Docker** >= 18.09 (可选，用于容器化部署)
+- **Git** >= 2.0
 
 ### Python 环境配置
 
+项目支持两种 PyTorch 安装方式：
+
 ```bash
-# 安装 PyTorch (根据您的 CUDA 版本选择合适的安装命令)
-# 无 CUDA 支持:
-pip3 install torch torchvision torchaudio
+# 方式1：标准安装 (无 CUDA 支持)
+pip install torch torchvision torchaudio
 
-# 或者使用 conda 安装:
-# conda install pytorch torchvision torchaudio cpuonly -c pytorch
-
-# 安装 macls 音频分类库
-pip install macls -U -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-# 或者从源码安装以获取最新功能
+# 方式2：从源码安装最新功能
 git clone https://github.com/yeyupiaoling/AudioClassification-Pytorch.git
 cd AudioClassification-Pytorch/
 pip install .
 ```
 
-## DockerCompose一键安装脚本
+## 快速开始
 
+### 方式1：一键脚本安装 (推荐)
+
+#### AMD64 架构
 ```bash
 curl -sSL https://raw.githubusercontent.com/Lvshujun0918/AI_Water/refs/heads/main/install.sh | bash
 ```
 
-## 安装和启动
+#### RISC-V 架构
+```bash
+curl -sSL https://raw.githubusercontent.com/Lvshujun0918/AI_Water/refs/heads/main/install-riscv.sh | bash
+```
 
-### 1. 克隆项目
+启动完成后，使用浏览器访问：**http://localhost:8080**
+
+### 方式2：编译安装
+
+#### 1. 克隆项目
 
 ```bash
 git clone https://github.com/Lvshujun0918/AI_Water
 cd AI_Water
 ```
 
-### 2. 安装依赖
+#### 2. 安装依赖
 
 ```bash
-# 安装根目录依赖
+# 安装项目根目录依赖
 npm install
 
 # 安装前端依赖
-cd frontend
-npm install
-cd ..
+cd frontend && npm install && cd ..
 
 # 安装后端依赖
-cd backend
-npm install
-cd ..
+cd backend && npm install && cd ..
 ```
 
-### 3. 启动项目
-
-#### 开发环境一键启动
+#### 3. 启动项目
 
 ```bash
+# 开发环境一键启动 (同时启动前后端)
 npm run dev
-```
 
-这将同时启动前端和后端服务:
-- 前端运行在 http://localhost:8080
-- 后端 API 服务运行在 http://localhost:3000
+# 或分别启动
 
-#### 分别启动服务
-
-```bash
-# 启动后端服务
+# 启动后端服务 (http://localhost:3000)
 npm run dev:backend
 
-# 启动前端服务
+# 启动前端服务 (http://localhost:8080)
 npm run dev:frontend
 ```
 
-#### 生产环境构建
+#### 4. 生产环境构建
 
 ```bash
-# 构建前端项目
+# 构建前端
 npm run build
+
+# 生产环境会自动使用优化后的输出
 ```
+
+## Docker 部署
+
+### 快速开始
+
+#### 使用 Docker Compose (推荐)
+
+```bash
+# 构建并启动所有服务
+docker-compose up --build
+
+# 后台运行
+docker-compose up --build -d
+
+# 停止服务
+docker-compose down
+```
+
+#### 使用纯 Docker
+
+```bash
+# 构建镜像
+docker build -t ai-water-system .
+
+# 运行开发环境容器
+docker run -p 3000:3000 -p 8080:8080 \
+  -v $(pwd)/backend/uploads:/app/backend/uploads \
+  -v $(pwd)/backend/users.db:/app/backend/users.db \
+  ai-water-system
+
+# 运行生产环境容器
+docker build -f Dockerfile.prod -t ai-water-system:prod .
+docker run -p 3000:3000 \
+  -v $(pwd)/backend/uploads:/app/backend/uploads \
+  -v $(pwd)/backend/users.db:/app/backend/users.db \
+  ai-water-system:prod
+```
+
+### Docker 环境变量
+
+```bash
+# 设置 Node 环境 (开发或生产)
+NODE_ENV=production
+```
+
+### 端口说明
+
+| 端口 | 服务 | 用途 |
+|------|------|------|
+| 3000 | 后端 API | REST API 接口服务 |
+| 8080 | 前端 | Web 用户界面 (开发环境) |
+| 80 | Nginx | 生产环境反向代理 |
+
+### 数据持久化
+
+项目通过 Docker 卷实现数据持久化：
+
+```
+backend/uploads    → 用户上传的音频文件存储
+backend/users.db   → SQLite 数据库 (用户、记录等)
+```
+
+## RISC-V 64位专用构建脚本
+
+### 脚本说明
+
+本项目提供专用于 **RISC-V 64位设备** 的自动化构建脚本 `build-and-push.sh`，可将 Docker 镜像直接推送到 GitHub Container Registry (GHCR)。
+
+### 前置要求
+
+1. **Docker** - `apt install docker.io`
+2. **Node.js >= 18** - 用于前端构建
+3. **GitHub Token** - 用于推送到 GHCR
+
+#### 创建 GitHub Token
+
+1. 访问 https://github.com/settings/tokens
+2. 点击 "Generate new token (classic)"
+3. 勾选权限：
+   - `write:packages` (推送包)
+   - `read:packages` (读取包)
+   - `delete:packages` (删除包)
+4. 复制 Token 并设置环境变量：
+   ```bash
+   export GITHUB_TOKEN=ghp_your_token_here
+   ```
+
+### 快速开始
+
+```bash
+# 1. 添加执行权限
+chmod +x build-and-push.sh
+
+# 2. 构建并推送
+export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+./build-and-push.sh --push -t latest -v 0.1.0
+
+# 或仅构建
+./build-and-push.sh --build-only
+
+# 跳过前端构建
+./build-and-push.sh --push --no-frontend-build
+```
+
+### 脚本参数
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `-t, --tag` | 镜像标签 | `latest` |
+| `-v, --version` | 版本号 | `0.1.0` |
+| `-u, --user` | GitHub 用户名 | `lvshujun0918` |
+| `-d, --dockerfile` | Dockerfile 路径 | `Dockerfile.prod.riscv` |
+| `--no-frontend-build` | 跳过前端构建 | - |
+| `-p, --push` | 构建后推送 | 不推送 |
+| `--build-only` | 仅构建 | - |
+| `--push-only` | 仅推送 | - |
+| `-h, --help` | 显示帮助 | - |
+
+### 使用示例
+
+```bash
+# 示例1：构建版本 1.0.0 并推送
+export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+./build-and-push.sh --tag v1.0.0 --version 1.0.0 --push
+
+# 示例2：仅构建 (包含前端编译)
+./build-and-push.sh --build-only
+
+# 示例3：跳过前端，仅构建镜像
+./build-and-push.sh --build-only --no-frontend-build
+
+# 示例4：仅推送已有镜像
+export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+./build-and-push.sh --push-only -t latest
+```
+
+### 构建后的镜像
+
+镜像会被推送到 GHCR：
+
+```
+ghcr.io/lvshujun0918/ai_water-riscv:latest
+ghcr.io/lvshujun0918/ai_water-riscv:riscv64-{git-commit}
+```
+
+拉取和运行：
+
+```bash
+docker pull ghcr.io/lvshujun0918/ai_water-riscv:latest
+docker run -d -p 80:80 ghcr.io/lvshujun0918/ai_water-riscv:latest
+```
+
+### 构建流程
+
+1. **前端编译** (可选)
+   - `npm ci` 安装前端依赖
+   - `npm run build` 编译生成 `frontend/dist`
+
+2. **Docker 构建**
+   - 使用 `Dockerfile.prod.riscv` 构建镜像
+   - 注入构建参数：BUILD_TIME, VERSION, GIT_COMMIT
+   - 生成双标签：`latest` + `riscv64-{git-commit}`
+
+3. **镜像推送**
+   - 使用 GITHUB_TOKEN 登录 GHCR
+   - 推送两个标签到仓库
+   - 完成后自动登出
+
+### 故障排查
+
+| 问题 | 解决方案 |
+|------|---------|
+| 前端构建失败 | 检查 Node.js 版本 (需要 18+)，清除缓存：`npm cache clean --force` |
+| Docker 构建失败 | 检查磁盘空间 `df -h`，确认 Dockerfile 存在 |
+| 推送失败 | 验证 GITHUB_TOKEN，检查网络，确认 Token 有 `write:packages` 权限 |
+| 登录 GHCR 失败 | Token 可能过期或权限不足，重新生成 Token |
+
+### 安全建议
+
+- ⚠️ **不要硬编码 Token** - 始终使用环境变量
+- 🔄 **定期轮换 Token** - 从 GitHub 设置创建新 Token，删除旧的
+- 🔒 **限制权限** - 只赋予必要的权限范围
+- 🚫 **不要分享 Token** - 如泄露，立即删除该 Token
 
 ## 项目结构
 
 ```
 .
-├── backend                 # 后端代码
-│   ├── py                  # Python 音频识别模型
-│   │   ├── config          # 模型配置文件
-│   │   └── predict.py      # 预测脚本
-│   ├── uploads             # 上传文件目录
-│   ├── utils               # 工具函数
-│   ├── server.js           # 主服务文件
-│   └── ...
-├── frontend                # 前端代码
-│   ├── src                 # 源代码
-│   │   ├── components      # 组件
-│   │   ├── views           # 页面视图
-│   │   ├── router          # 路由配置
-│   │   ├── config          # 配置文件
-│   │   └── ...
-│   └── ...
-├── package.json            # 根目录配置
-└── README.md               # 项目说明文件
+├── backend/                          # 后端服务
+│   ├── py/                          # Python AI 模型
+│   │   ├── config/                  # 模型配置文件
+│   │   ├── dataset/                 # 数据集和标签
+│   │   ├── model/                   # 预训练模型权重
+│   │   └── predict.py               # 推理脚本
+│   ├── uploads/                     # 上传文件目录
+│   ├── utils/                       # 工具函数 (JWT等)
+│   ├── server.js                    # Express 主服务
+│   ├── package.json
+│   └── users.db                     # SQLite 数据库
+│
+├── frontend/                         # 前端应用
+│   ├── src/
+│   │   ├── components/              # Vue 组件
+│   │   ├── views/                   # 页面组件
+│   │   │   ├── Login.vue            # 登录页
+│   │   │   ├── Dashboard.vue        # 仪表板
+│   │   │   ├── Upload.vue           # 上传页
+│   │   │   ├── Records.vue          # 记录页
+│   │   │   ├── UserManagement.vue   # 用户管理
+│   │   │   ├── Profile.vue          # 个人资料
+│   │   │   └── Home.vue             # 首页
+│   │   ├── router/                  # 路由配置
+│   │   ├── config/                  # API 配置
+│   │   ├── styles/                  # 全局样式 (glassmorphism)
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── dist/                        # 构建输出 (生产环境)
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+│
+├── docs/                            # 文档
+├── whl/                             # Python 轮包
+│   └── AudioClassification-Pytorch/ # 音频分类库源码
+│
+├── Dockerfile                       # 开发环境镜像
+├── Dockerfile.prod                  # 生产环境镜像 (AMD64)
+├── Dockerfile.prod.riscv            # 生产环境镜像 (RISC-V)
+├── docker-compose.yml               # Docker Compose 配置
+├── nginx.conf                       # Nginx 配置
+├── build-and-push.sh                # RISC-V 构建脚本
+├── install.sh                       # AMD64 一键安装脚本
+├── install-riscv.sh                 # RISC-V 一键安装脚本
+├── package.json                     # 根目录脚本配置
+└── README.md                        # 本文件
 ```
 
 ## API 接口
 
-主要 API 接口包括：
+### 认证接口
 
-- `/api/init-status` - 检查系统初始化状态
-- `/api/init-admin` - 初始化管理员账户
-- `/api/login` - 用户登录
-- `/api/upload-audio` - 音频文件上传
-- `/api/audio-files` - 获取音频文件列表
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/init-status` | GET | 检查系统初始化状态 |
+| `/api/init-admin` | POST | 初始化管理员账户 |
+| `/api/login` | POST | 用户登录 |
+| `/api/profile` | GET | 获取用户信息 |
+| `/api/logout` | POST | 用户登出 |
 
-更多接口详情请查看 [backend/server.js](backend/server.js) 文件。
+### 音频接口
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/upload-audio` | POST | 上传音频文件 |
+| `/api/audio-files` | GET | 获取音频文件列表 |
+| `/api/audio/{id}` | GET | 获取单个音频详情 |
+| `/api/audio/{id}/delete` | DELETE | 删除音频文件 |
+
+### 用户管理接口
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/users` | GET | 获取用户列表 |
+| `/api/users` | POST | 创建新用户 |
+| `/api/users/{id}` | PUT | 更新用户信息 |
+| `/api/users/{id}` | DELETE | 删除用户 |
+
+更多接口详情请查看 [backend/server.js](backend/server.js)。
+
+## 使用说明
+
+### 首次使用
+
+1. **访问初始化页面**
+   - 在浏览器打开 http://localhost:8080
+   - 进入系统初始化页面
+
+2. **创建管理员账户**
+   - 填写用户名、邮箱、密码
+   - 确认初始化
+
+3. **登录系统**
+   - 使用刚创建的管理员账户登录
+
+4. **上传和分析**
+   - 在 "上传" 页面选择音频文件
+   - 系统自动进行 AI 分析
+   - 在 "记录" 页面查看分析结果
+
+### 系统限制
+
+| 限制项 | 值 |
+|--------|-----|
+| 音频文件大小 | 50 MB |
+| 支持格式 | .mp3, .wav, .flac, .ogg |
+| 数据库类型 | SQLite (开发)，建议生产环境迁移到 PostgreSQL |
+| 并发用户数 | 建议不超过 100 |
+
+## 常见问题
+
+### Q: 如何修改系统配置？
+A: 后端配置在 `backend/server.js`，前端配置在 `frontend/src/config/api.js`。
+
+### Q: Python 模型加载失败怎么办？
+A: 
+1. 检查 Python 环境：`python --version`
+2. 检查依赖：`pip list | grep torch`
+3. 查看模型文件是否存在：`backend/py/model/model.pth`
+
+### Q: 如何在 RISC-V 设备上部署？
+A: 使用提供的 RISC-V 构建脚本：
+```bash
+chmod +x build-and-push.sh
+./build-and-push.sh --push
+```
+
+### Q: 生产环境推荐配置？
+A: 
+- 使用 Nginx 作为反向代理
+- 使用 PostgreSQL 代替 SQLite
+- 启用 HTTPS (Let's Encrypt)
+- 配置 CDN 加速静态资源
+- 使用 Docker 和 Kubernetes 部署
 
 ## 许可证
 
-本项目采用 MIT 许可证，详细信息请查看 [LICENSE](LICENSE) 文件。
+本项目采用 **MIT 许可证**。详见 [LICENSE](LICENSE) 文件。
 
 ### 第三方依赖许可证
 
 #### 前端依赖
 
-| 包名 | 许可证 | 链接 |
-|------|--------|------|
+| 包 | 许可证 | 链接 |
+|----|---------|------|
 | vue | MIT | https://github.com/vuejs/core |
 | element-plus | MIT | https://github.com/element-plus/element-plus |
 | vue-router | MIT | https://github.com/vuejs/router |
@@ -190,8 +487,8 @@ npm run build
 
 #### 后端依赖
 
-| 包名 | 许可证 | 链接 |
-|------|--------|------|
+| 包 | 许可证 | 链接 |
+|----|---------|------|
 | express | MIT | https://github.com/expressjs/express |
 | sqlite3 | BSD-3-Clause | https://github.com/TryGhost/node-sqlite3 |
 | bcrypt | MIT | https://github.com/kelektiv/node.bcrypt.js |
@@ -203,25 +500,46 @@ npm run build
 
 #### Python 依赖
 
-| 包名 | 许可证 | 链接 |
-|------|--------|------|
+| 包 | 许可证 | 链接 |
+|----|---------|------|
 | torch (PyTorch) | BSD-3-Clause | https://github.com/pytorch/pytorch |
 | macls | Apache-2.0 | https://github.com/yeyupiaoling/AudioClassification-Pytorch |
 
-## 使用说明
+## 相关资源
 
-1. 首次运行系统时，访问 http://localhost:8080 进入初始化页面，创建管理员账户
-2. 初始化完成后，使用管理员账户登录系统
-3. 在上传页面上传音频文件进行风险评估
-4. 在记录页面查看历史上传记录和分析结果
+- [Vue 3 文档](https://vuejs.org/)
+- [Element Plus 文档](https://element-plus.org/)
+- [Express 文档](https://expressjs.com/)
+- [PyTorch 文档](https://pytorch.org/)
+- [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+- [Docker 文档](https://docs.docker.com/)
 
-## 注意事项
+## 贡献指南
 
-1. 确保已正确安装 Python 环境和相关依赖包
-2. 音频文件大小限制为 50MB
-3. 系统仅支持音频文件上传（如 .mp3, .wav 等格式）
-4. 首次运行需要网络连接以下载模型依赖
+欢迎提交 Issue 和 Pull Request！
 
-## 贡献
+### 贡献流程
 
-欢迎提交 Issue 和 Pull Request 来改进本项目。
+1. Fork 本项目
+2. 创建特性分支：`git checkout -b feature/AmazingFeature`
+3. 提交更改：`git commit -m 'Add some AmazingFeature'`
+4. 推送到分支：`git push origin feature/AmazingFeature`
+5. 开启 Pull Request
+
+### 代码规范
+
+- 前端：遵循 Vue 3 组合式 API 最佳实践
+- 后端：使用 ES6+ 语法，遵循 Node.js 最佳实践
+- Python：遵循 PEP 8 规范
+
+## 支持和反馈
+
+- 📝 提交 Issue：[GitHub Issues](https://github.com/Lvshujun0918/AI_Water/issues)
+- 💬 讨论问题：[GitHub Discussions](https://github.com/Lvshujun0918/AI_Water/discussions)
+- 📧 邮件反馈：[项目维护者]
+
+---
+
+**最后更新**：2025年12月18日
+
+**项目状态**：✅ 开发中 - 持续更新和改进
