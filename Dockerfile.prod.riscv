@@ -7,7 +7,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV PYTHONHTTPSVERIFY=0
 
-
 # NGINX安装
 RUN apt-get update 
 
@@ -54,8 +53,6 @@ WORKDIR /app
 
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
-
-RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 RUN pip config set global.extra-index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
