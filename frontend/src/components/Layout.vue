@@ -391,14 +391,24 @@ export default {
   height: 100vh;
 }
 
-/* 侧边栏样式 - 统一蓝色主题 */
+/* 侧边栏样式 - 精致优化版 */
 .layout-aside {
-  background: linear-gradient(180deg, #1890ff 0%, #0e7fe6 100%);
+  background: linear-gradient(180deg, #0050b3 0%, #003a8c 50%, #002766 100%);
   color: #fff;
   transition: width 0.3s ease;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15), inset -1px 0 0 rgba(255, 255, 255, 0.05);
   position: relative;
   z-index: 100;
+}
+
+.layout-aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(64, 169, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(135, 208, 104, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .layout-aside::after {
@@ -408,85 +418,197 @@ export default {
   right: 0;
   bottom: 0;
   width: 1px;
-  background-color: #f0f2f5;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.15) 100%);
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 100%);
   color: #fff;
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(64, 169, 255, 0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo:hover::before {
+  opacity: 1;
 }
 
 .logo::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(64, 169, 255, 0.5), transparent);
+  box-shadow: 0 0 8px rgba(64, 169, 255, 0.3);
 }
 
 .logo h2 {
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 18px;
   white-space: nowrap;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(64, 169, 255, 0.2);
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
 }
 
-/* 菜单样式 */
+.logo:hover h2 {
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 30px rgba(64, 169, 255, 0.4);
+}
+
+/* 菜单样式 - 精致优化版 */
 .layout-menu {
   border: none;
   transition: all 0.3s ease;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 64px);
   overflow-y: auto;
+  padding: 16px 12px;
+  background: transparent;
 }
 
 .layout-menu::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .layout-menu::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(64, 169, 255, 0.4), rgba(64, 169, 255, 0.2));
   border-radius: 3px;
 }
 
+.layout-menu::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(64, 169, 255, 0.6), rgba(64, 169, 255, 0.4));
+}
+
 .layout-menu::-webkit-scrollbar-track {
-  background-color: transparent;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
 }
 
 .layout-menu .el-menu-item {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  height: 48px;
+  line-height: 48px;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  position: relative;
+  overflow: hidden;
+}
+
+.layout-menu .el-menu-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.layout-menu .el-menu-item:hover::before {
+  transform: translateX(100%);
+}
+
+.layout-menu .el-menu-item :deep(.el-icon) {
+  font-size: 19px;
+  margin-right: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .layout-menu .el-menu-item:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: linear-gradient(135deg, rgba(64, 169, 255, 0.25) 0%, rgba(64, 169, 255, 0.15) 100%) !important;
   color: #ffffff !important;
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.layout-menu .el-menu-item:hover :deep(.el-icon) {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 4px 8px rgba(64, 169, 255, 0.4));
 }
 
 .layout-menu .el-menu-item.is-active {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(135deg, rgba(64, 169, 255, 0.35) 0%, rgba(64, 169, 255, 0.25) 100%) !important;
   color: #ffffff !important;
   position: relative;
   font-weight: 600;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.layout-menu .el-menu-item.is-active::before {
+.layout-menu .el-menu-item.is-active::after {
   content: '';
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
-  bottom: 0;
+  transform: translateY(-50%);
+  height: 28px;
   width: 4px;
-  background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  border-radius: 0 4px 4px 0;
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.8),
+    0 0 30px rgba(64, 169, 255, 0.5);
+}
+
+.layout-menu .el-menu-item.is-active :deep(.el-icon) {
+  transform: scale(1.2);
+  filter: drop-shadow(0 4px 12px rgba(64, 169, 255, 0.6));
+  color: #ffffff;
+}
+
+/* 折叠状态优化 */
+.layout-aside.el-menu--collapse .logo h2 {
+  opacity: 0;
+}
+
+.layout-menu.el-menu--collapse .el-menu-item {
+  padding: 0;
+  text-align: center;
+  border-radius: 8px;
+  margin: 6px auto;
+  width: 48px;
+}
+
+.layout-menu.el-menu--collapse .el-menu-item :deep(.el-icon) {
+  margin-right: 0;
+  font-size: 22px;
+}
+
+.layout-menu.el-menu--collapse .el-menu-item.is-active::after {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 0;
+  height: 3px;
+  width: 24px;
+  border-radius: 0 0 3px 3px;
 }
 
 /* 头部样式 - 统一设计 */

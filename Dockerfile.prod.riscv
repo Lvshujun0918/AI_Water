@@ -1,6 +1,6 @@
 # 前端静态文件由 CI 在工作区生成到 `frontend/dist`，Dockerfile 直接复制
 # 使用进迭时空镜像
-FROM debian:bullseye-slim
+FROM debian:forky-slim
 
 # 避免交互式安装
 ENV DEBIAN_FRONTEND=noninteractive
