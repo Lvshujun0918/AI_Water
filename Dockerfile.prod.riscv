@@ -56,7 +56,7 @@ COPY whl/ ./whl/
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
 
-RUN pip config set global.extra-index-url http://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
+RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
 RUN pip install --trusted-host git.spacemit.com torch==2.8.0 --break-system-packages
 
