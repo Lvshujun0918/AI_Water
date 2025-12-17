@@ -1,6 +1,6 @@
 # 前端静态文件由 CI 在工作区生成到 `frontend/dist`，Dockerfile 直接复制
 # 使用进迭时空镜像
-FROM debian:forky-slim
+FROM ubuntu:24.04
 
 # 避免交互式安装
 ENV DEBIAN_FRONTEND=noninteractive
@@ -26,8 +26,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     libopenblas-dev \
     libjpeg-dev \
-    zlib1g-dev \
-    libsleef3
+    zlib1g-dev
+
+RUN git clone https://github.com/shibatch/sleef
+RUN cd sleef && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=../../install
+RUN cmake --build . -j --clean-first
+RUN cmake --install .
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \

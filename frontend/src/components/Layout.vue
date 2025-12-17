@@ -391,14 +391,19 @@ export default {
   height: 100vh;
 }
 
-/* 侧边栏样式 - 精致优化版 */
+/* 侧边栏样式 - 玻璃态效果 */
 .layout-aside {
-  background: linear-gradient(180deg, #0050b3 0%, #003a8c 50%, #002766 100%);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: #333;
   transition: width 0.3s ease;
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15), inset -1px 0 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    2px 0 16px rgba(0, 0, 0, 0.08),
+    inset -1px 0 0 rgba(255, 255, 255, 0.5);
   position: relative;
   z-index: 100;
+  border-right: 1px solid rgba(240, 240, 240, 0.6);
 }
 
 .layout-aside::before {
@@ -406,8 +411,8 @@ export default {
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(circle at 20% 30%, rgba(64, 169, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(135, 208, 104, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(24, 144, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(24, 144, 255, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -418,8 +423,8 @@ export default {
   right: 0;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.15) 100%);
-  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, transparent 0%, rgba(24, 144, 255, 0.1) 50%, transparent 100%);
+  opacity: 0.6;
 }
 
 .logo {
@@ -427,20 +432,21 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 100%);
-  color: #fff;
+  background: rgba(250, 250, 250, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #1890ff;
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(240, 240, 240, 0.6);
 }
 
 .logo::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(64, 169, 255, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(24, 144, 255, 0.08) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -456,8 +462,13 @@ export default {
   left: 20px;
   right: 20px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(64, 169, 255, 0.5), transparent);
-  box-shadow: 0 0 8px rgba(64, 169, 255, 0.3);
+  background: linear-gradient(90deg, transparent, rgba(24, 144, 255, 0.3), transparent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover::after {
+  transform: scaleX(1);
 }
 
 .logo h2 {
@@ -467,15 +478,14 @@ export default {
   white-space: nowrap;
   transition: all 0.3s ease;
   letter-spacing: 1.5px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(64, 169, 255, 0.2);
-  color: #ffffff;
+  color: #1890ff;
   position: relative;
   z-index: 1;
 }
 
 .logo:hover h2 {
   letter-spacing: 2px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 30px rgba(64, 169, 255, 0.4);
+  color: #0050b3;
 }
 
 /* 菜单样式 - 精致优化版 */
@@ -493,28 +503,29 @@ export default {
 }
 
 .layout-menu::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(64, 169, 255, 0.4), rgba(64, 169, 255, 0.2));
+  background: #d9d9d9;
   border-radius: 3px;
+  transition: background 0.3s ease;
 }
 
 .layout-menu::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(64, 169, 255, 0.6), rgba(64, 169, 255, 0.4));
+  background: linear-gradient(180deg, #1890ff, #0050b3);
 }
 
 .layout-menu::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: #f5f5f5;
   border-radius: 3px;
 }
 
 .layout-menu .el-menu-item {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 10px;
+  border-radius: 8px;
   margin-bottom: 6px;
   height: 48px;
   line-height: 48px;
   font-weight: 500;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #666;
   position: relative;
   overflow: hidden;
 }
@@ -523,7 +534,7 @@ export default {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(24, 144, 255, 0.08), transparent);
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -536,31 +547,28 @@ export default {
   font-size: 19px;
   margin-right: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  color: #999;
 }
 
 .layout-menu .el-menu-item:hover {
-  background: linear-gradient(135deg, rgba(64, 169, 255, 0.25) 0%, rgba(64, 169, 255, 0.15) 100%) !important;
-  color: #ffffff !important;
-  transform: translateX(6px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: #f0f7ff !important;
+  color: #1890ff !important;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
 }
 
 .layout-menu .el-menu-item:hover :deep(.el-icon) {
-  transform: scale(1.15) rotate(5deg);
-  filter: drop-shadow(0 4px 8px rgba(64, 169, 255, 0.4));
+  transform: scale(1.1);
+  color: #1890ff;
 }
 
 .layout-menu .el-menu-item.is-active {
-  background: linear-gradient(135deg, rgba(64, 169, 255, 0.35) 0%, rgba(64, 169, 255, 0.25) 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%) !important;
+  color: #0050b3 !important;
   position: relative;
   font-weight: 600;
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+  border: 1px solid #91d5ff;
 }
 
 .layout-menu .el-menu-item.is-active::after {
@@ -571,17 +579,14 @@ export default {
   transform: translateY(-50%);
   height: 28px;
   width: 4px;
-  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  background: linear-gradient(180deg, #1890ff 0%, #0050b3 100%);
   border-radius: 0 4px 4px 0;
-  box-shadow: 
-    0 0 15px rgba(255, 255, 255, 0.8),
-    0 0 30px rgba(64, 169, 255, 0.5);
+  box-shadow: 0 0 8px rgba(24, 144, 255, 0.5);
 }
 
 .layout-menu .el-menu-item.is-active :deep(.el-icon) {
-  transform: scale(1.2);
-  filter: drop-shadow(0 4px 12px rgba(64, 169, 255, 0.6));
-  color: #ffffff;
+  transform: scale(1.15);
+  color: #0050b3;
 }
 
 /* 折叠状态优化 */
@@ -609,20 +614,25 @@ export default {
   height: 3px;
   width: 24px;
   border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, #1890ff 0%, #0050b3 100%);
 }
 
-/* 头部样式 - 统一设计 */
+/* 头部样式 - 玻璃态效果 */
 .layout-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(24, 144, 255, 0.05);
   padding: 0 24px;
   height: 60px;
   z-index: 10;
   transition: all 0.3s ease;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(240, 240, 240, 0.6);
 }
 
 .header-left {
