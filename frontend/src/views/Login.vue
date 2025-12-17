@@ -141,13 +141,13 @@ export default {
 </script>
 
 <style scoped>
-/* 企业级登录页面样式 - 简约现代 */
+/* 企业级登录页面样式 - 玻璃态效果 */
 .login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1890ff;
+  background: linear-gradient(135deg, #f0f2f5 0%, #e6f0ff 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -161,10 +161,10 @@ export default {
   right: -5%;
   width: 400px;
   height: 400px;
-  background: #e6f0ff;
+  background: radial-gradient(circle, rgba(24, 144, 255, 0.15) 0%, transparent 70%);
   border-radius: 50%;
-  opacity: 0.4;
   pointer-events: none;
+  animation: float 8s ease-in-out infinite;
 }
 
 .login-container::after {
@@ -174,26 +174,46 @@ export default {
   left: -5%;
   width: 350px;
   height: 350px;
-  background: #f0e6ff;
+  background: radial-gradient(circle, rgba(24, 144, 255, 0.1) 0%, transparent 70%);
   border-radius: 50%;
-  opacity: 0.3;
   pointer-events: none;
+  animation: float 10s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 20px); }
 }
 
 .login-card {
   width: 600px;
   border-radius: 12px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(24, 144, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   overflow: hidden;
   position: relative;
   z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(24, 144, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 /* 头部区域 */
 .card-header {
   padding: 40px 40px 30px;
   text-align: center;
-  background: #ffffff;
 }
 
 .logo-container {
@@ -293,7 +313,7 @@ export default {
 
 .login-footer {
   text-align: center;
-  color: white;
+  color: #666666;
   font-size: 13px;
   margin-top: 30px;
   position: absolute;
