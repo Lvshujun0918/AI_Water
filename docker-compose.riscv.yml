@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.nju.edu.cn/lvshujun0918/ai_water-riscv:main
+    image: ghcr.nju.edu.cn/lvshujun0918/ai_water-riscv:latest-riscv
     user: "1000:1000"
     ports:
       - "8080:80"
