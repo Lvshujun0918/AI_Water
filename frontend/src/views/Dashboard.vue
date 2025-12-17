@@ -498,19 +498,45 @@ export default {
 </script>
 
 <style scoped>
+/* Dashboard 样式 - 与登录页统一风格 */
 .dashboard-container {
-  padding: 20px;
+  padding: 24px;
+  background: transparent;
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-header h1 {
   margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.dashboard-header :deep(.el-button) {
+  background: #1890ff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.dashboard-header :deep(.el-button:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
 }
 
 .dashboard-grid {
@@ -521,7 +547,11 @@ export default {
 }
 
 .dashboard-item {
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-item:hover {
+  transform: translateY(-2px);
 }
 
 .dashboard-item.full {
@@ -547,10 +577,36 @@ export default {
   .dashboard-item.half {
     grid-column: span 1;
   }
+  
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .dashboard-header {
+    padding: 16px 20px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 20px;
+  }
 }
 
 .dashboard-card {
   height: 100%;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card :deep(.el-card__header) {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 20px;
 }
 
 .card-header {
@@ -559,48 +615,70 @@ export default {
   align-items: center;
 }
 
+.card-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.card-header :deep(.el-button) {
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
 .card-content {
   min-height: 200px;
+  padding: 10px;
 }
 
 .welcome-content {
   text-align: center;
-  margin-bottom: 30px;
+  padding: 20px;
 }
 
 .welcome-content h3 {
-  margin: 0 0 10px 0;
-  font-size: 24px;
-  color: #333;
+  margin: 0 0 12px 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: #1890ff;
 }
 
 .welcome-content p {
   margin: 0;
-  color: #666;
-  font-size: 16px;
+  color: #666666;
+  font-size: 15px;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 24px;
 }
 
 .stat-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 20px;
 }
 
 .stat-icon {
-  font-size: 30px;
-  margin-right: 15px;
+  font-size: 32px;
+  margin-right: 16px;
 }
 
 .stat-info {
@@ -608,19 +686,21 @@ export default {
 }
 
 .stat-number {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 5px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #1890ff;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #666;
+  color: #666666;
+  font-weight: 500;
 }
 
 .chart-container {
   height: 300px;
-  padding: 10px 0;
+  padding: 16px;
 }
 
 .chart {
@@ -629,7 +709,17 @@ export default {
 }
 
 .recent-files {
-  padding: 10px;
+  padding: 12px;
+}
+
+.recent-files :deep(.el-table) {
+  border-radius: 8px;
+}
+
+.recent-files :deep(.el-table th) {
+  background: #fafafa;
+  color: #333333;
+  font-weight: 600;
 }
 
 .user-stats {
@@ -637,11 +727,12 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding: 20px;
 }
 
 .stats-info {
   display: flex;
-  gap: 40px;
+  gap: 60px;
 }
 
 .stats-item {
@@ -649,29 +740,50 @@ export default {
 }
 
 .stats-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #409eff;
+  font-size: 36px;
+  font-weight: 700;
+  color: #1890ff;
+  margin-bottom: 8px;
 }
 
 .stats-label {
-  font-size: 16px;
-  color: #666;
-  margin-top: 5px;
+  font-size: 15px;
+  color: #666666;
+  font-weight: 500;
 }
 
 .add-card-section {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.add-card-section :deep(.el-button) {
+  background: #1890ff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.add-card-section :deep(.el-button:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
 }
 
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: rgba(24, 144, 255, 0.1);
+  border: 2px dashed #1890ff;
 }
 
 .chosen {
-  border: 2px solid #409eff;
+  border: 2px solid #1890ff;
   transform: scale(0.98);
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
 }
 </style>

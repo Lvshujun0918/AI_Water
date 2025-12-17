@@ -201,42 +201,64 @@ export default {
 </script>
 
 <style scoped>
+/* Home 页面样式 - 与登录页统一风格 */
 .home-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f0f2f5;
+  background: #f0f2f5;
   padding: 20px;
   position: relative;
+  overflow: hidden;
 }
 
 .home-container::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="%23d0d0d0"/><circle cx="50" cy="50" r="1" fill="%23d0d0d0"/><circle cx="80" cy="80" r="1" fill="%23d0d0d0"/></svg>');
-  background-size: 100px 100px;
+  top: -10%;
+  right: -5%;
+  width: 400px;
+  height: 400px;
+  background: #e6f0ff;
+  border-radius: 50%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.home-container::after {
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  left: -5%;
+  width: 350px;
+  height: 350px;
+  background: #f0e6ff;
+  border-radius: 50%;
   opacity: 0.3;
+  pointer-events: none;
 }
 
 .init-card {
   width: 100%;
   max-width: 450px;
-  border-radius: 8px;
-  border: 1px solid #e1e1e1;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
   background: #ffffff;
-  margin-bottom: 20px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.init-card :deep(.el-card__header) {
+  padding: 40px 40px 30px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
 }
 
 .card-header {
   text-align: center;
-  padding: 20px 0;
 }
 
 .logo-container {
@@ -244,72 +266,121 @@ export default {
 }
 
 .logo-icon {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.logo-icon svg {
+  fill: #1890ff;
 }
 
 .card-header h1 {
   margin: 0 0 10px 0;
   font-size: 28px;
   font-weight: 700;
-  color: #333;
-  letter-spacing: 1px;
+  color: #1890ff;
+  letter-spacing: 0.5px;
 }
 
 .card-header h2 {
-  margin: 0 0 10px 0;
-  font-size: 22px;
+  margin: 0 0 8px 0;
+  font-size: 20px;
   font-weight: 600;
-  color: #1890ff;
+  color: #333333;
 }
 
 .subtitle {
   margin: 0;
-  color: #666;
-  font-size: 15px;
+  color: #666666;
+  font-size: 14px;
   line-height: 1.6;
 }
 
 .init-form { 
-  width: 500px;
+  width: 100%;
+}
+
+.init-card :deep(.el-card__body) {
+  padding: 30px 40px 40px;
 }
 
 .init-form :deep(.el-form-item__label) {
   font-weight: 600;
-  color: #333;
+  color: #333333;
 }
 
 .init-form :deep(.el-input__wrapper) {
-  border-radius: 4px;
-  padding: 5px 15px;
+  background: #f7f8fa;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  padding: 12px 15px;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.init-form :deep(.el-input__wrapper:hover) {
+  border-color: #c0c4cc;
+}
+
+.init-form :deep(.el-input__wrapper.is-focus) {
+  border-color: #1890ff;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.init-form :deep(.el-button--primary) {
+  background: #1890ff;
+  border: none;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.init-form :deep(.el-button--primary:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
 }
 
 .success-card {
   width: 100%;
-  max-width: 500px;
-  border-radius: 8px;
-  border: 1px solid #e1e1e1;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  border-radius: 12px;
   background: #ffffff;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 1;
 }
 
 .init-success {
   width: 100%;
-  max-width: 500px;
+  max-width: 450px;
   text-align: center;
 }
 
 .init-footer {
   text-align: center;
-  color: #666;
-  font-size: 14px;
+  color: #999999;
+  font-size: 13px;
   margin-top: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
   .init-card,
   .success-card {
     max-width: 90%;
-    margin: 0 15px;
+  }
+  
+  .init-card :deep(.el-card__header) {
+    padding: 30px 25px 20px;
+  }
+  
+  .init-card :deep(.el-card__body) {
+    padding: 25px 25px 35px;
   }
   
   .card-header h1 {
@@ -317,7 +388,38 @@ export default {
   }
   
   .card-header h2 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container {
+    padding: 15px;
+  }
+  
+  .init-card,
+  .success-card {
+    max-width: 100%;
+  }
+  
+  .init-card :deep(.el-card__header) {
+    padding: 25px 20px 15px;
+  }
+  
+  .init-card :deep(.el-card__body) {
+    padding: 20px 20px 30px;
+  }
+  
+  .card-header h1 {
+    font-size: 22px;
+  }
+  
+  .card-header h2 {
+    font-size: 16px;
+  }
+  
+  .subtitle {
+    font-size: 13px;
   }
 }
 </style>

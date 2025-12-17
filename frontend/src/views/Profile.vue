@@ -216,24 +216,66 @@ export default {
 </script>
 
 <style scoped>
+/* Profile 页面样式 - 统一风格 */
 .profile-container {
-  padding: 20px;
+  padding: 24px;
 }
 
 .profile-card {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.profile-card :deep(.el-card__header) {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
 }
 
 .card-header {
   text-align: center;
 }
 
+.card-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
 .profile-form {
-  margin-top: 20px;
+  margin-top: 24px;
+  padding: 0 24px;
 }
 
 .profile-form .el-form-item {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
+}
+
+.profile-form :deep(.el-input__wrapper) {
+  border-radius: 8px;
+}
+
+.profile-form :deep(.el-button--primary) {
+  background: #1890ff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.profile-form :deep(.el-button--primary:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+.profile-form :deep(.el-button) {
+  border-radius: 8px;
+  padding: 10px 24px;
 }
 </style>

@@ -269,8 +269,21 @@ export default {
 </script>
 
 <style scoped>
+/* Records 页面样式 - 统一风格 */
 .records-container {
-  padding: 20px;
+  padding: 24px;
+}
+
+.records-card {
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.records-card :deep(.el-card__header) {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
 }
 
 .card-header {
@@ -279,13 +292,58 @@ export default {
   align-items: center;
 }
 
+.card-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.card-header :deep(.el-button--primary) {
+  background: #1890ff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.card-header :deep(.el-button--primary:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+.records-card :deep(.el-table) {
+  border-radius: 8px;
+}
+
+.records-card :deep(.el-table th) {
+  background: #fafafa;
+  color: #333333;
+  font-weight: 600;
+}
+
+.records-card :deep(.el-table td) {
+  color: #666666;
+}
+
+.records-card :deep(.el-button) {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: center;
 }
 
 .audio-info {
   margin-top: 20px;
+}
+
+.audio-info :deep(.el-descriptions) {
+  border-radius: 8px;
 }
 </style>

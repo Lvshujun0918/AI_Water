@@ -1,0 +1,150 @@
+/* 全局视觉增强样式 - 不改变功能，仅提升美观 */
+:root{
+  --bg-1: linear-gradient(180deg,#0f172a 0%, #081129 60%);
+  --card-bg: rgba(255,255,255,0.02);
+  --glass: rgba(255,255,255,0.03);
+  --accent: #4f46e5; /* indigo-600 */
+  --muted: rgba(255,255,255,0.72);
+  --radius: 10px;
+  --glass-border: rgba(255,255,255,0.06);
+}
+
+html,body,#app{
+  height:100%;
+}
+body{
+  margin:0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color:var(--muted);
+  background: var(--bg-1);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* app 容器默认框架（若页面使用自己的布局不会受影响） */
+#app{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* 通用卡片样式 */
+.card, .el-card, .panel{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+  padding: 16px;
+}
+
+/* 元素控件统一风格（Element Plus 覆盖） */
+.el-button{
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight:600;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.el-button--primary{
+  background: linear-gradient(90deg,var(--accent), #7c3aed);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+}
+.el-button:active{ transform: translateY(1px); }
+
+.el-input__inner, input, textarea, select{
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: box-shadow .12s ease, border-color .12s ease;
+}
+.el-input__inner:focus, input:focus, textarea:focus{
+  outline: none;
+  box-shadow: 0 6px 20px rgba(79,70,229,0.12);
+  border-color: var(--accent);
+}
+
+/* 表格/列表美化 */
+.el-table, table{
+  background: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.el-table th{ color: rgba(255,255,255,0.78); }
+
+/* 顶部/侧边栏风格补充，若项目使用则会增强视觉 */
+.layout-header, header, .topbar{
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  padding: 10px 18px;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar{ width:10px; height:10px }
+::-webkit-scrollbar-track{ background: transparent }
+::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.06); border-radius:10px }
+
+/* 响应式小屏优化 */
+@media (max-width: 720px){
+  .card, .el-card{ padding:12px; border-radius:8px }
+  .el-button{ padding:7px 10px }
+}
+
+/* 微动画（避免大量动画影响性能） */
+.fade-up{ animation: fadeUp .36s ease both }
+@keyframes fadeUp{ from{ opacity:0; transform: translateY(6px) } to{ opacity:1; transform:none } }
+
+/* small helper */
+.muted{ color: rgba(255,255,255,0.6) }
+
+/* ----- 页面级细化样式：Dashboard / Upload / Records / UserManagement ----- */
+
+/* Dashboard */
+.dashboard-container { padding: 24px; }
+.dashboard-header h1 { color: #fff; font-size: 22px; margin: 0; font-weight: 700; }
+.dashboard-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015)); }
+.stat-card { transition: transform .12s ease, box-shadow .12s ease; }
+.stat-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(2,6,23,0.6); }
+
+/* Upload 页面样式 */
+.upload-container { max-width: 720px; margin: 28px auto; padding: 0 16px; }
+.upload-card { padding: 18px; border-radius: 12px; }
+.upload-card .card-header h2 { color: #fff; font-size: 20px; }
+.upload-demo { border: 1px dashed rgba(255,255,255,0.06); border-radius: 10px; padding: 28px 10px; background: rgba(255,255,255,0.01); }
+.upload-demo .el-upload__text { color: var(--muted); font-size: 15px; }
+.upload-demo em { color: #fff; font-style: normal; font-weight:700; }
+.processing-status .status-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+.status-content .el-progress__text { color: var(--muted); }
+
+/* Records 列表 */
+.records-container { padding: 20px; }
+.records-card { border-radius: 12px; padding: 14px; }
+.records-card .el-table th { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color: rgba(255,255,255,0.88); font-weight:600; }
+.records-card .el-table td { color: var(--muted); }
+
+/* User Management */
+.user-management-container { padding: 20px; }
+.user-card { border-radius: 12px; padding: 14px; }
+
+/* 对话框与浮层 */
+.el-dialog__header { background: transparent; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.el-dialog { color: var(--muted); }
+.el-dialog .el-button { border-radius: 8px }
+
+/* 标签和进度条色彩调整 */
+.el-tag--danger { background: rgba(255,77,79,0.08); color: #ff4d4f; border: 1px solid rgba(255,77,79,0.06); }
+.el-tag--warning { background: rgba(250,173,20,0.08); color: #f0ad4e; border: 1px solid rgba(250,173,20,0.06); }
+.el-tag--success { background: rgba(92,184,92,0.08); color: #67c23a; border: 1px solid rgba(92,184,92,0.06); }
+.el-tag--info { background: rgba(64,158,255,0.08); color: #409eff; border: 1px solid rgba(64,158,255,0.06); }
+
+.el-progress__bar { border-radius: 8px; overflow: hidden; }
+.el-progress__bar-inner { background: linear-gradient(90deg, var(--accent), #7c3aed); }
+
+/* 适配小屏的卡片和按钮 */
+@media (max-width: 720px){
+  .upload-container, .records-container, .user-management-container { padding-left: 12px; padding-right: 12px }
+  .dashboard-header h1 { font-size: 18px }
+}
+
