@@ -391,12 +391,12 @@ export default {
   height: 100vh;
 }
 
-/* 侧边栏样式 */
+/* 侧边栏样式 - 统一蓝色主题 */
 .layout-aside {
-  background-color: #001529;
+  background: linear-gradient(180deg, #1890ff 0%, #0e7fe6 100%);
   color: #fff;
   transition: width 0.3s ease;
-  box-shadow: 2px 0 8px rgba(29, 35, 41, 0.1);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 100;
 }
@@ -416,7 +416,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #002140;
+  background: rgba(0, 0, 0, 0.1);
   color: #fff;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -430,7 +430,7 @@ export default {
   left: 0;
   right: 0;
   height: 1px;
-  background-color: #003366;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .logo h2 {
@@ -467,14 +467,15 @@ export default {
 }
 
 .layout-menu .el-menu-item:hover {
-  background-color: #1890ff !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
 }
 
 .layout-menu .el-menu-item.is-active {
-  background-color: #1890ff !important;
+  background: rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
   position: relative;
+  font-weight: 600;
 }
 
 .layout-menu .el-menu-item.is-active::before {
@@ -484,20 +485,22 @@ export default {
   left: 0;
   bottom: 0;
   width: 4px;
-  background-color: #ffffff;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
-/* 头部样式 */
+/* 头部样式 - 统一设计 */
 .layout-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.12);
-  padding: 0 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0 24px;
   height: 60px;
   z-index: 10;
   transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .header-left {
@@ -518,7 +521,7 @@ export default {
 .menu-toggle:hover {
   transform: scale(1.1);
   color: #1890ff;
-  background-color: #f0f2f5;
+  background: #f0f7ff;
 }
 
 .header-right {
@@ -540,22 +543,23 @@ export default {
 
 .notification-icon:hover {
   color: #1890ff;
-  background-color: #f0f2f5;
+  background: #f0f7ff;
 }
 
 .user-name {
   margin-right: 10px;
   font-size: 14px;
-  color: #333;
+  color: #333333;
   font-weight: 500;
 }
 
 .user-avatar {
-  background-color: #1890ff;
+  background: #1890ff;
   color: white;
   cursor: pointer;
   transition: all 0.3s;
-  border: 2px solid #e1f0ff;
+  border: 2px solid #d9e9ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
 }
 
 .user-avatar:hover {
@@ -630,25 +634,19 @@ export default {
   color: #999;
 }
 
-/* 主内容区域样式 */
+/* 主内容区域样式 - 透明背景 */
 .layout-main {
-  background-color: #f0f2f5;
-  padding: 20px;
+  background: transparent;
+  padding: 0;
   transition: padding 0.3s;
   overflow-y: auto;
 }
 
 .layout-main-content {
-  background: #fff;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  min-height: calc(100vh - 140px);
+  background: transparent;
+  padding: 0;
+  min-height: calc(100vh - 60px);
   transition: all 0.3s ease;
-}
-
-.layout-main-content:hover {
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
 }
 
 /* 响应式设计 */

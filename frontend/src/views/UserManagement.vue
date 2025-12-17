@@ -102,16 +102,50 @@ export default {
 </script>
 
 <style scoped>
+/* User Management 页面样式 - 统一风格 */
 .user-management-container {
-  padding: 20px;
+  padding: 24px;
+}
+
+.user-card {
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.user-card :deep(.el-card__header) {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
 }
 
 .card-header {
   text-align: center;
 }
 
+.card-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.user-card :deep(.el-table) {
+  border-radius: 8px;
+}
+
+.user-card :deep(.el-table th) {
+  background: #fafafa;
+  color: #333333;
+  font-weight: 600;
+}
+
+.user-card :deep(.el-table td) {
+  color: #666666;
+}
+
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: center;
 }

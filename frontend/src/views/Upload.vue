@@ -244,60 +244,106 @@ export default {
 </script>
 
 <style scoped>
+/* Upload 页面样式 - 统一风格 */
 .upload-container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 0 20px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.upload-card {
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.upload-card :deep(.el-card__header) {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
 }
 
 .card-header {
   text-align: center;
-  padding: 10px 0;
 }
 
 .card-header h2 {
   margin: 0;
-  font-size: 24px;
-  color: #333;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1890ff;
 }
 
 .upload-demo {
   width: 100%;
 }
 
+.upload-demo :deep(.el-upload-dragger) {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.upload-demo :deep(.el-upload-dragger:hover) {
+  border-color: #1890ff;
+  background: #f0f7ff;
+}
+
 .button-group {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.button-group :deep(.el-button) {
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-weight: 500;
+}
+
+.button-group :deep(.el-button--primary) {
+  background: #1890ff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.button-group :deep(.el-button--primary:hover) {
+  background: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
 }
 
 .processing-status {
-  margin-top: 30px;
+  margin-top: 24px;
 }
 
 .status-card {
-  border: none;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .status-content {
   text-align: center;
-  padding: 20px 0;
+  padding: 24px;
 }
 
 .status-message {
-  margin: 15px 0;
+  margin: 16px 0;
   font-size: 14px;
-  color: #606266;
+  color: #666666;
+  font-weight: 500;
 }
 
 .error-info {
-  margin-top: 15px;
+  margin-top: 16px;
 }
 
 .el-upload__tip {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 12px;
+  color: #999999;
 }
 </style>
