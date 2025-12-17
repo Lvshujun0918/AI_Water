@@ -27,13 +27,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopenblas-dev \
     libjpeg-dev \
     zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libsleef3
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     openssl \
     python3-openssl \
  && update-ca-certificates
+
+RUN rm -rf /var/lib/apt/lists/*
 
 # 创建Python虚拟环境
 RUN virtualenv aiwater
