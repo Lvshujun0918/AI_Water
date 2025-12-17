@@ -1,22 +1,32 @@
-# Docker 部署指南
+# Docker 构建和部署指南
 
-本项目支持通过 Docker 进行容器化部署，提供了开发环境和生产环境两种部署方式，同时Github Actions提供了CI/CD流水线，用于自动构建和发布Docker镜像。
+## 快速开始
 
-## 目录结构
+### 仅 Linux 支持
 
+本项目提供 **Linux 专用** 的构建脚本 `build-and-push.sh`，用于自动化地构建和推送 Docker 镜像。
+
+```bash
+# 1. 添加执行权限
+chmod +x build-and-push.sh
+
+# 2. 设置 GitHub Token
+export GITHUB_TOKEN=ghp_your_token_here
+
+# 3. 构建并推送镜像
+./build-and-push.sh --push -t latest -v 0.1.0
 ```
-.
-├── Dockerfile              # 开发环境Dockerfile
-├── Dockerfile.prod         # 生产环境Dockerfile
-├── docker-compose.yml      # Docker Compose配置文件
-├── .dockerignore           # Docker忽略文件
-└── ... (其他项目文件)
-```
+
+### 详细说明
+
+请查看 [BUILD_AND_PUSH_GUIDE.md](./BUILD_AND_PUSH_GUIDE.md)
 
 ## 环境要求
 
 - Docker >= 18.09
-- Docker Compose >= 1.25 (可选，用于简化多容器管理)
+- Docker Compose >= 1.25 (可选)
+- Node.js >= 18 (用于前端构建)
+- Bash (用于脚本)
 
 ## 开发环境部署
 
