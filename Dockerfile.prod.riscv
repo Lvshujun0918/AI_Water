@@ -1,17 +1,6 @@
 # 前端静态文件由 CI 在工作区生成到 `frontend/dist`，Dockerfile 直接复制
 # 使用进迭时空镜像
-FROM ubuntu:24.04
-
-RUN tee /etc/apt/sources.list.d/bianbu.sources > /dev/null << EOF; \
-        Types: deb \
-        URIs: http://archive.spacemit.com/bianbu/ \
-        Suites: \${UBUNTU_CODENAME}/snapshots/v2.1 \${UBUNTU_CODENAME}-security/snapshots/v2.1 \${UBUNTU_CODENAME}-porting/snapshots/v2.1 \${UBUNTU_CODENAME}-customization/snapshots/v2.1 \
-        Components: main universe restricted multiverse \
-        Types: deb \
-        URIs: http://archive.spacemit.com/bianbu/ \
-        Suites: \${UBUNTU_CODENAME}-s1 \
-        Components: main universe restricted multiverse \
-        EOF
+FROM harbor.spacemit.com/bianbu/bianbu:latest
 
 # 避免交互式安装
 ENV DEBIAN_FRONTEND=noninteractive
@@ -60,10 +49,10 @@ RUN . aiwater/bin/activate
 # 设置工作目录
 WORKDIR /app
 
-COPY whl/ ./whl/
-
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
+
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
