@@ -7,6 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV PYTHONHTTPSVERIFY=0
 
+ENV LD_LIBRARY_PATH="/usr/local/lib/python3.12/dist-packages/torch/lib:${LD_LIBRARY_PATH}"
+
 # NGINX安装
 RUN apt-get update 
 
@@ -62,7 +64,7 @@ RUN pip install --upgrade setuptools --break-system-packages
 
 RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
-RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --break-system-packages
+RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com torch torchvision torchaudio --break-system-packages
 
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com av==11.0.0 --break-system-packages
 
