@@ -31,13 +31,17 @@ RUN apt-get install -y --no-install-recommends \
     libopenblas-dev \
     libjpeg-dev \
     zlib1g-dev \
-    libsleef3
+    libsleef3 \
+    libomp5 \
+    libnuma1 \
+    libsndfile1 \
+    libavformat60 \
+    ffmpeg
 
 RUN apt-get install -y \
     ca-certificates \
     openssl \
     python3-openssl
-
 RUN update-ca-certificates
 
 RUN rm -rf /var/lib/apt/lists/*
@@ -58,11 +62,11 @@ RUN pip install --upgrade setuptools --break-system-packages
 
 RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple
 
-RUN pip install --trusted-host git.spacemit.com torch==2.8.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torch==2.5.1 --break-system-packages
 
-RUN pip install --trusted-host git.spacemit.com torchvision==0.23.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchvision==0.20.1 --break-system-packages
 
-RUN pip install --trusted-host git.spacemit.com torchaudio==2.8.0 --break-system-packages
+RUN pip install --trusted-host git.spacemit.com torchaudio==2.5.1 --break-system-packages
 
 RUN pip install --trusted-host git.spacemit.com numba==0.62.1 --break-system-packages
 
