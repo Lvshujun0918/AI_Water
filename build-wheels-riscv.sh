@@ -44,9 +44,18 @@ check_prerequisites() {
   
   if [[ "${PLATFORM}" == "riscv64" && "$(uname -m)" != "riscv64" ]]; then
     log_warning "Cross-compiling RISC-V on non-RISC-V host (requires QEMU binfmt support)"
-    if ! docker run --rm --platform linux/riscv64 busybox:latest true >/dev/null 2>&1; then
-      log_warning "QEMU RISC-V binfmt not detected; Docker buildx may use emulation."
+    
+    # Attempt to setup QEMU binfmt
+    log "Setting up QEMU binfmt for riscv64..."
+    if ! docker run --rm --privileged tonistiigi/binfmt:latest --install riscv64 >/dev/null 2>&1; then
+      log_warning "QEMU binfmt setup may have failed; Docker buildx will still attempt emulation"
+    else
+      log_success "QEMU binfmt configured"
     fi
+    
+    # Enable BuildKit for better cross-platform support
+    export DOCKER_BUILDKIT=1
+    log "BuildKit enabled for improved cross-platform builds"
   fi
 }
 
@@ -55,20 +64,21 @@ build_image() {
   log "Building ${PLATFORM} wheel image: ${IMAGE_TAG}"
   
   if [[ "${PLATFORM}" == "riscv64" ]]; then
-    # Use explicit platform for cross-compilation
-    docker build \
+    # Use explicit platform for cross-compilation with BuildKit
+    DOCKER_BUILDKIT=1 docker build \
       --platform linux/riscv64 \
       -f "${DOCKERFILE}" \
       -t "${IMAGE_TAG}" \
       --progress=plain \
-      . || die "Build failed"
+      --build-arg BUILDKIT_INLINE_CACHE=1 \
+      . || die "Build failed for riscv64"
   else
     # Native build
-    docker build \
+    DOCKER_BUILDKIT=1 docker build \
       -f "${DOCKERFILE}" \
       -t "${IMAGE_TAG}" \
       --progress=plain \
-      . || die "Build failed"
+      . || die "Build failed for ${PLATFORM}"
   fi
   
   log_success "Image built: ${IMAGE_TAG}"
