@@ -1,0 +1,64 @@
+FROM docker.io/riscv64/ubuntu:24.04 as build
+
+SHELL ["/bin/bash", "-c"]
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Base toolchain and Python
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3.12 python3.12-dev python3.12-venv python3-pip \
+    build-essential git make ca-certificates \
+    libopenblas-dev libopenblas64-dev \
+    libssl-dev cmake ninja-build patchelf libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
+    libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk \
+    libharfbuzz-dev libfribidi-dev libxcb1-dev meson \
+    sudo && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Non-root user for builds
+RUN groupadd riscv64 && \
+    useradd -s /bin/bash -g riscv64 -m -k /dev/null riscv64 && \
+    usermod -a -G sudo riscv64 && \
+    echo "riscv64 ALL = NOPASSWD : ALL" >> /etc/sudoers.d/riscv64
+
+USER riscv64
+WORKDIR /Pytorch-Wildlife
+
+# Fetch sources (shallow to save time/space)
+RUN git clone --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && \
+  git submodule update --init --recursive --depth 1 && cd .. && \
+  git clone --depth 1 https://github.com/pytorch/vision.git && \
+  git clone --depth 1 https://github.com/pytorch/audio.git && \
+  git clone --depth 1 https://github.com/microsoft/CameraTraps
+
+# Build wheels inside venv
+RUN python3.12 -m venv venv && source venv/bin/activate && \
+  pip install --upgrade pip setuptools wheel auditwheel && \
+  MAX_CONCURRENCY=64 pip wheel --wheel-dir /Pytorch-Wildlife/ cffi dataclasses future oldest-supported-numpy pillow pyyaml requests six typing_extensions tqdm && \
+  pip install /Pytorch-Wildlife/*whl && \
+  cd /Pytorch-Wildlife/pytorch && \
+  python3 setup.py build && python3 setup.py bdist_wheel && \
+  cd /Pytorch-Wildlife/audio && USE_FFMPEG=0 python3 setup.py build && USE_FFMPEG=0 python3 setup.py bdist_wheel && \
+  cd /Pytorch-Wildlife/vision && python3 setup.py build && python3 setup.py bdist_wheel
+
+# Final stage: gather wheels only
+FROM docker.io/riscv64/ubuntu:24.04 as wheels
+SHELL ["/bin/bash", "-c"]
+VOLUME /output
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER root
+WORKDIR /output
+
+# Copy all generated wheels to /output
+COPY --from=build /Pytorch-Wildlife/pytorch/dist/*.whl /output/
+COPY --from=build /Pytorch-Wildlife/audio/dist/*.whl   /output/
+COPY --from=build /Pytorch-Wildlife/vision/dist/*.whl  /output/
+COPY --from=build /Pytorch-Wildlife/*.whl              /output/
+
+# Default entry prints collected wheels
+ENTRYPOINT ["bash", "-lc", "ls -lh /output"]
