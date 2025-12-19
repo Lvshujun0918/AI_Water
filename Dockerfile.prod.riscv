@@ -48,16 +48,18 @@ RUN update-ca-certificates
 
 RUN rm -rf /var/lib/apt/lists/*
 
-# 创建Python虚拟环境
-RUN virtualenv aiwater
-
-# 激活虚拟环境并升级pip
-RUN . aiwater/bin/activate
-
 # 设置工作目录
 WORKDIR /app
 
 COPY whl/ ./whl/
+
+# 创建Python虚拟环境
+RUN virtualenv aiwater
+
+# 激活虚拟环境并升级pip
+RUN source aiwater/bin/activate
+
+RUN pip install --upgrade pip
 
 # pip手动安装
 RUN pip install --upgrade setuptools --break-system-packages
@@ -73,6 +75,8 @@ RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
 
 RUN pip install ./whl/AudioClassification-Pytorch/ --break-system-packages
+
+RUN deactivate
 
 # 复制后端依赖文件
 COPY backend/package*.json ./backend/
