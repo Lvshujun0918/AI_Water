@@ -123,6 +123,52 @@ whl/output/
 
 ## 故障排查
 
+### 问题 0：exec format error (QEMU 兼容性)
+
+```
+ERROR: failed to build: failed to solve: process "/bin/sh -c" failed: exec /bin/bash: exec format error
+```
+
+**原因**：QEMU binfmt 未正确配置，导致 Docker 无法执行 riscv64 二进制。
+
+**解决**：
+
+1. **自动修复（推荐）**
+   ```bash
+   # 脚本会自动尝试设置 QEMU binfmt
+   PLATFORM=riscv64 ./build-wheels-riscv.sh
+   ```
+
+2. **手动设置 QEMU**
+   ```bash
+   # 为 RISC-V 安装 binfmt
+   docker run --rm --privileged tonistiigi/binfmt:latest --install riscv64
+   
+   # 验证
+   ls -la /proc/sys/fs/binfmt_misc/riscv64
+   ```
+
+3. **诊断脚本**
+   ```bash
+   chmod +x test-qemu-riscv.sh
+   ./test-qemu-riscv.sh
+   ```
+
+4. **启用 Docker BuildKit**
+   ```bash
+   export DOCKER_BUILDKIT=1
+   PLATFORM=riscv64 ./build-wheels-riscv.sh
+   ```
+
+5. **如仍失败，尝试清理后重试**
+   ```bash
+   # 删除旧镜像
+   docker rmi ai-water-wheels:riscv64 || true
+   
+   # 重新构建
+   PLATFORM=riscv64 ./build-wheels-riscv.sh
+   ```
+
 ### 问题 1：QEMU 模拟不可用
 
 ```
@@ -138,7 +184,53 @@ docker run --rm --privileged tonistiigi/binfmt --install riscv64
 PLATFORM=riscv64 ./build-wheels-riscv.sh
 ```
 
-### 问题 2：磁盘空间不足
+### 问题 2：诊断环境问题
+
+如需深入诊断 QEMU 和 Docker 配置，使用提供的诊断脚本：
+
+```bash
+chmod +x test-qemu-riscv.sh
+./test-qemu-riscv.sh
+```
+
+脚本会检查：
+- ✓ Docker 安装和版本
+- ✓ BuildKit 可用性
+- ✓ 系统架构
+- ✓ QEMU binfmt 注册状态
+- ✓ RISC-V 平台支持
+- ✓ Shell 兼容性
+- ✓ Docker 守护进程配置
+
+**输出示例**：
+```
+[diag] RISC-V Cross-Compilation Diagnostics
+
+[diag] 1. Docker status
+[diag] Docker is installed: Docker version 24.0.0, build...
+
+[diag] 2. Docker BuildKit status
+[diag] BuildKit available
+
+[diag] 3. Current system architecture
+[diag] System arch: x86_64
+
+[diag] 4. QEMU binfmt handlers
+[diag] RISC-V binfmt is registered
+
+[diag] 5. Testing riscv64 platform support
+[diag] RISC-V platform test passed
+
+[diag] 6. Testing riscv64 shell execution
+[diag] Shell execution test passed
+
+[diag] Diagnostics complete!
+
+To build RISC-V wheels:
+  PLATFORM=riscv64 ./build-wheels-riscv.sh
+```
+
+### 问题 3：磁盘空间不足
 
 ```
 Error: No space left on device
@@ -153,7 +245,7 @@ docker system prune -a
 OUTPUT_DIR=/mnt/large-disk/wheels ./build-wheels-riscv.sh
 ```
 
-### 问题 3：构建超时
+### 问题 4：构建超时
 
 **解决**：
 - 增加 Docker 构建超时：
@@ -163,7 +255,7 @@ OUTPUT_DIR=/mnt/large-disk/wheels ./build-wheels-riscv.sh
   ```
 - 或分开构建（编辑 `Dockerfile.whl`，注释不需要的部分）
 
-### 问题 4：权限错误
+### 问题 5：权限错误
 
 ```
 permission denied: /output
