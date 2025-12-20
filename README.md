@@ -3,10 +3,12 @@
 基于 Vue3 + Element Plus 构建的水务管网漏水音频识别后台管理系统，用于管理和分析上传的音频文件，及时发现漏水点，解放人类手动检测的耗时和误差。系统使用深度学习模型对音频进行分类和风险评估。
 
 ## 项目截图
-<img width="2550" height="2480" alt="image" src="https://github.com/user-attachments/assets/d73a9274-dea6-4e46-aef2-9cdfaa044c22" />
-<img width="2196" height="673" alt="image" src="https://github.com/user-attachments/assets/bd057d34-7ff2-4202-9dec-fd7cb5716d38" />
-<img width="2166" height="1118" alt="image" src="https://github.com/user-attachments/assets/8bf340dc-35ec-4e07-90e0-365b2f84ed62" />
-<img width="513" height="618" alt="image" src="https://github.com/user-attachments/assets/fbc9c861-6ea3-4be8-96eb-26d273f060f9" />
+<img width="2338" height="1579" alt="image" src="https://github.com/user-attachments/assets/0d9e1f2b-1421-4bc5-9a3d-b31b417978df" />
+<img width="2338" height="1579" alt="image" src="https://github.com/user-attachments/assets/47ab44b6-20ff-49a7-9288-11b40a7cc0d4" />
+<img width="2338" height="1579" alt="image" src="https://github.com/user-attachments/assets/48302e44-3054-4616-94f5-8e655d3fe9f8" />
+<img width="2338" height="1579" alt="image" src="https://github.com/user-attachments/assets/75e842af-a105-476e-9adf-70b2c9606a9f" />
+<img width="2338" height="1579" alt="image" src="https://github.com/user-attachments/assets/04494e9a-5fd9-4d4f-a68f-302bb49d8513" />
+
 
 ## 项目概述
 
