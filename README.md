@@ -206,15 +206,15 @@ backend/uploads    → 用户上传的音频文件存储
 backend/users.db   → SQLite 数据库 (用户、记录等)
 ```
 
-## RISC-V 64位专用构建脚本
+## RISC-V 构建与 PyTorch Wheel 编译
 
-### 脚本说明
+### Docker 镜像构建脚本 (`build-and-push.sh`)
 
-本项目提供专用于 **RISC-V 64位设备** 的自动化构建脚本 `build-and-push.sh`，可将 Docker 镜像直接推送到 GitHub Container Registry (GHCR)。
+本项目提供 **RISC-V 64位专用** 的自动化 Docker 构建脚本，可将镜像推送到 GitHub Container Registry (GHCR)。
 
-### 前置要求
+#### 前置要求
 
-1. **Docker** - `apt install docker.io`
+1. **Docker** >= 18.09 - `apt install docker.io`
 2. **Node.js >= 18** - 用于前端构建
 3. **GitHub Token** - 用于推送到 GHCR
 
@@ -222,33 +222,26 @@ backend/users.db   → SQLite 数据库 (用户、记录等)
 
 1. 访问 https://github.com/settings/tokens
 2. 点击 "Generate new token (classic)"
-3. 勾选权限：
-   - `write:packages` (推送包)
-   - `read:packages` (读取包)
-   - `delete:packages` (删除包)
-4. 复制 Token 并设置环境变量：
-   ```bash
-   export GITHUB_TOKEN=ghp_your_token_here
-   ```
+3. 勾选权限：`write:packages`、`read:packages`、`delete:packages`
+4. 复制 Token：`export GITHUB_TOKEN=ghp_xxxxxxxxxxxx`
 
-### 快速开始
+#### 快速开始
 
 ```bash
-# 1. 添加执行权限
 chmod +x build-and-push.sh
 
-# 2. 构建并推送
+# 构建并推送到 GHCR
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 ./build-and-push.sh --push -t latest -v 0.1.0
 
-# 或仅构建
+# 仅构建镜像
 ./build-and-push.sh --build-only
 
 # 跳过前端构建
 ./build-and-push.sh --push --no-frontend-build
 ```
 
-### 脚本参数
+#### 脚本参数
 
 | 参数 | 说明 | 默认值 |
 |------|------|--------|
@@ -258,75 +251,142 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 | `-d, --dockerfile` | Dockerfile 路径 | `Dockerfile.prod.riscv` |
 | `--no-frontend-build` | 跳过前端构建 | - |
 | `-p, --push` | 构建后推送 | 不推送 |
-| `--build-only` | 仅构建 | - |
-| `--push-only` | 仅推送 | - |
-| `-h, --help` | 显示帮助 | - |
+| `--build-only` / `--push-only` | 仅构建或推送 | - |
 
-### 使用示例
+#### 构建流程
+
+1. **前端编译** - npm ci → npm run build
+2. **Docker 构建** - 使用 Dockerfile.prod.riscv，注入 BUILD_TIME/VERSION/GIT_COMMIT
+3. **镜像推送** - 推送到 ghcr.io，生成标签：latest + riscv64-{commit}
+
+#### 使用示例
 
 ```bash
-# 示例1：构建版本 1.0.0 并推送
+# 完整构建并推送
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 ./build-and-push.sh --tag v1.0.0 --version 1.0.0 --push
 
-# 示例2：仅构建 (包含前端编译)
-./build-and-push.sh --build-only
-
-# 示例3：跳过前端，仅构建镜像
-./build-and-push.sh --build-only --no-frontend-build
-
-# 示例4：仅推送已有镜像
-export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
-./build-and-push.sh --push-only -t latest
-```
-
-### 构建后的镜像
-
-镜像会被推送到 GHCR：
-
-```
-ghcr.io/lvshujun0918/ai_water-riscv:latest
-ghcr.io/lvshujun0918/ai_water-riscv:riscv64-{git-commit}
-```
-
-拉取和运行：
-
-```bash
+# 拉取并运行
 docker pull ghcr.io/lvshujun0918/ai_water-riscv:latest
 docker run -d -p 80:80 ghcr.io/lvshujun0918/ai_water-riscv:latest
 ```
 
-### 构建流程
+---
 
-1. **前端编译** (可选)
-   - `npm ci` 安装前端依赖
-   - `npm run build` 编译生成 `frontend/dist`
+### PyTorch/Vision/Audio Wheel 编译 (`build-wheels-riscv.sh`)
 
-2. **Docker 构建**
-   - 使用 `Dockerfile.prod.riscv` 构建镜像
-   - 注入构建参数：BUILD_TIME, VERSION, GIT_COMMIT
-   - 生成双标签：`latest` + `riscv64-{git-commit}`
+本项目支持在 **RISC-V 设备** 和 **非 RISC-V 主机**（x86_64）上通过 QEMU 模拟构建 PyTorch、Vision、Audio wheels。
 
-3. **镜像推送**
-   - 使用 GITHUB_TOKEN 登录 GHCR
-   - 推送两个标签到仓库
-   - 完成后自动登出
+#### 环境要求
 
-### 故障排查
+- Docker >= 20.10 (支持 `--platform` 标志)
+- bash >= 4.0
+- 磁盘空间：10-30GB (build 可能较大)
 
-| 问题 | 解决方案 |
-|------|---------|
-| 前端构建失败 | 检查 Node.js 版本 (需要 18+)，清除缓存：`npm cache clean --force` |
-| Docker 构建失败 | 检查磁盘空间 `df -h`，确认 Dockerfile 存在 |
-| 推送失败 | 验证 GITHUB_TOKEN，检查网络，确认 Token 有 `write:packages` 权限 |
-| 登录 GHCR 失败 | Token 可能过期或权限不足，重新生成 Token |
+#### 快速开始
 
-### 安全建议
+**在 RISC-V 设备上原生编译：**
+```bash
+chmod +x build-wheels-riscv.sh
+./build-wheels-riscv.sh
+# 输出到 ./whl/output
+```
 
-- ⚠️ **不要硬编码 Token** - 始终使用环境变量
-- 🔄 **定期轮换 Token** - 从 GitHub 设置创建新 Token，删除旧的
-- 🔒 **限制权限** - 只赋予必要的权限范围
-- 🚫 **不要分享 Token** - 如泄露，立即删除该 Token
+**在 x86_64 上交叉编译 RISC-V wheels（QEMU 模拟）：**
+```bash
+PLATFORM=riscv64 OUTPUT_DIR=/tmp/riscv-wheels ./build-wheels-riscv.sh
+```
+
+**自动检测平台：**
+```bash
+PLATFORM=auto ./build-wheels-riscv.sh
+```
+
+#### 环境变量
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `PLATFORM` | 目标平台：`riscv64`、`amd64` 或 `auto` | `riscv64` |
+| `OUTPUT_DIR` | wheels 输出目录 | `./whl/output` |
+| `DOCKERFILE` | Dockerfile 路径 | `Dockerfile.whl` |
+
+#### 构建时间估计
+
+| 场景 | 时间 | 备注 |
+|------|------|------|
+| RISC-V 原生编译 | 2-6 小时 | 取决于硬件 |
+| x86_64 QEMU 模拟 | 4-12 小时 | QEMU 增加 2-3x 开销 |
+| 增量构建 | 15-30 分钟 | Docker 缓存加速 |
+
+#### 构建产物
+
+编译完成后的 wheels 目录结构：
+```
+whl/output/
+├── torch-2.x.x-cp312-...-linux_riscv64.whl
+├── torchaudio-2.x.x-cp312-...-linux_riscv64.whl
+├── torchvision-0.x.x-cp312-...-linux_riscv64.whl
+└── *.whl  (其他依赖)
+```
+
+#### 故障排查
+
+**问题：exec format error (QEMU 兼容性)**
+```bash
+# 自动修复
+PLATFORM=riscv64 ./build-wheels-riscv.sh
+
+# 或手动设置 QEMU binfmt
+docker run --rm --privileged tonistiigi/binfmt:latest --install riscv64
+
+# 诊断脚本
+chmod +x test-qemu-riscv.sh
+./test-qemu-riscv.sh
+```
+
+**问题：磁盘空间不足**
+```bash
+docker system prune -a
+OUTPUT_DIR=/mnt/large-disk/wheels ./build-wheels-riscv.sh
+```
+
+**问题：权限错误**
+```bash
+mkdir -p "${OUTPUT_DIR}"
+chmod 777 "${OUTPUT_DIR}"
+./build-wheels-riscv.sh
+```
+
+#### CI/CD 集成
+
+GitHub Actions 示例：
+```yaml
+name: Build RISC-V Wheels
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v2
+        with:
+          platforms: riscv64
+      - run: PLATFORM=riscv64 OUTPUT_DIR=./wheels ./build-wheels-riscv.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: riscv64-wheels
+          path: ./wheels/*.whl
+```
+
+---
+
+### 镜像与 Wheel 安全建议
+
+- ⚠️ **Token 管理** - 不要硬编码，始终使用环境变量
+- 🔄 **定期轮换** - 定期创建新 Token，删除旧的
+- 🔒 **权限最小化** - 只赋予必要的权限范围
+- 🚫 **泄露应急** - 如发现 Token 泄露，立即删除并重新生成
 
 ## 项目结构
 
