@@ -60,6 +60,8 @@ RUN pip config set global.extra-index-url https://git.spacemit.com/api/v4/projec
 
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --break-system-packages
 
+RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com av==11.0.0 --break-system-packages
+
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com numba==0.62.1 --break-system-packages
 
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
