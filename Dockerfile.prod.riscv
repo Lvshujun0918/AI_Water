@@ -20,6 +20,8 @@ RUN apt-get install -y nodejs npm
 # pyenv安装
 RUN apt-get install -y python3-virtualenv
 
+RUN apt-get install -y llvm-14 llvm-14-dev clang cmake
+
 # pip3安装
 RUN apt-get install -y python3-pip python3-full
 
@@ -64,7 +66,7 @@ RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages
 
 RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com numba==0.62.1 --break-system-packages
 
-RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com llvmlite==0.45.1 --break-system-packages
+RUN pip install --index-url https://git.spacemit.com/api/v4/projects/33/packages/pypi/simple --trusted-host git.spacemit.com llvmlite==0.43.0 --break-system-packages
 
 RUN pip install ./whl/AudioClassification-Pytorch/ --break-system-packages
 
