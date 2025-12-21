@@ -3,12 +3,12 @@
 基于 Vue3 + Element Plus 构建的水务管网漏水音频识别后台管理系统，用于管理和分析上传的音频文件，及时发现漏水点，解放人类手动检测的耗时和误差。系统使用深度学习模型对音频进行分类和风险评估。
 
 本项目参加由开放原子开源基金会主办的**第三届RISC-V基础软件与应用创新大赛**，对于本参赛作品，您可在以下链接中查看相关参赛递交文件：
-1. 技术报告：[report.pdf](.\report\report.pdf)
+1. 技术报告：[report.pdf](report/report.pdf)
 2. 1. 源代码：[openatom.tech仓库](https://openatom.tech/2025nist/605c1cdfbe67c6ec350e2e3b47e3ebc6)
-   2. 模型：[初始训练模型](.whl\AudioClassification-Pytorch\macls\models)、[最终使用模型](.\backend\py\model)
-   3. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
-   4. README说明：本文件
-3. 作品评审PPT：[report.pptx](.\report\report.pptx)
+   1. 模型：[初始训练模型](whl/AudioClassification-Pytorch/macls/models)、[最终使用模型](backend/py/model)
+   2. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
+   3. README说明：本文件
+3. 作品评审PPT：[report.pptx](report/report.pptx)
 4. 视频演示：
 5. 演示程序：可访问[演示站点](https://aw.home.cszj.wang:5208/)进行体验，【lvshujun/qwerty123】
 
