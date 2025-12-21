@@ -9,7 +9,7 @@
    2. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
    3. README说明：本文件
 3. 作品评审PPT：[report.pptx](report/report.pptx)
-4. 视频演示：
+4. 视频演示：[report.mp4](https://cl.home.cszj.wang:5208/s/oeim)，由于编码原因，在线预览可能异常，请**下载观看**。
 5. 演示程序：可访问[演示站点](https://aw.home.cszj.wang:5208/)进行体验，【lvshujun/qwerty123】
 
 
@@ -587,33 +587,3 @@ A:
 - [PyTorch 文档](https://pytorch.org/)
 - [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
 - [Docker 文档](https://docs.docker.com/)
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-### 贡献流程
-
-1. Fork 本项目
-2. 创建特性分支：`git checkout -b feature/AmazingFeature`
-3. 提交更改：`git commit -m 'Add some AmazingFeature'`
-4. 推送到分支：`git push origin feature/AmazingFeature`
-5. 开启 Pull Request
-
-### 代码规范
-
-- 前端：遵循 Vue 3 组合式 API 最佳实践
-- 后端：使用 ES6+ 语法，遵循 Node.js 最佳实践
-- Python：遵循 PEP 8 规范
-
-## 支持和反馈
-
-- 📝 提交 Issue：[GitHub Issues](https://github.com/Lvshujun0918/AI_Water/issues)
-- 💬 讨论问题：[GitHub Discussions](https://github.com/Lvshujun0918/AI_Water/discussions)
-- 📧 邮件反馈：[项目维护者]
-
----
-
-**最后更新**：2025年12月18日
-
-**项目状态**：✅ 开发中 - 持续更新和改进
