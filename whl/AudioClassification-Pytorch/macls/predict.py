@@ -7,7 +7,8 @@ import numpy as np
 import torch
 import yaml
 from loguru import logger
-from yeaudio.audio import AudioSegment
+
+from macls.data_utils.augmentation import AudioSegment
 from macls.data_utils.featurizer import AudioFeaturizer
 from macls.models import build_model
 from macls.utils.utils import dict_to_object, print_arguments, convert_string_based_on_type
@@ -96,21 +97,27 @@ class MAClsPredictor:
         if isinstance(audio_data, str):
             audio_segment = AudioSegment.from_file(audio_data)
         elif isinstance(audio_data, BufferedReader):
-            audio_segment = AudioSegment.from_file(audio_data)
+            # 从文件对象读取字节
+            audio_bytes = audio_data.read()
+            audio_segment = AudioSegment.from_bytes(audio_bytes)
         elif isinstance(audio_data, np.ndarray):
             audio_segment = AudioSegment.from_ndarray(audio_data, sample_rate)
         elif isinstance(audio_data, bytes):
             audio_segment = AudioSegment.from_bytes(audio_data)
         else:
             raise Exception(f'不支持该数据类型，当前数据类型为：{type(audio_data)}')
+        
         # 重采样
         if audio_segment.sample_rate != self.configs.dataset_conf.dataset.sample_rate:
             audio_segment.resample(self.configs.dataset_conf.dataset.sample_rate)
+        
         # decibel normalization
         if self.configs.dataset_conf.dataset.use_dB_normalization:
             audio_segment.normalize(target_db=self.configs.dataset_conf.dataset.target_dB)
+        
         assert audio_segment.duration >= self.configs.dataset_conf.dataset.min_duration, \
             f'音频太短，最小应该为{self.configs.dataset_conf.dataset.min_duration}s，当前音频为{audio_segment.duration}s'
+        
         return audio_segment
 
     # 预测一个音频的特征
