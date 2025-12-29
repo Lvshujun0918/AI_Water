@@ -7,7 +7,8 @@ import numpy as np
 import torch
 import yaml
 from loguru import logger
-from yeaudio.audio import AudioSegment
+
+from macls.data_utils.augmentation import AudioSegment
 from macls.data_utils.featurizer import AudioFeaturizer
 from macls.models import build_model
 from macls.utils.utils import dict_to_object, print_arguments, convert_string_based_on_type

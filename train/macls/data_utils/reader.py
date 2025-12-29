@@ -4,10 +4,9 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
-from yeaudio.audio import AudioSegment
-from yeaudio.augmentation import SpeedPerturbAugmentor, VolumePerturbAugmentor, NoisePerturbAugmentor, \
-    ReverbPerturbAugmentor, SpecAugmentor
 
+from macls.data_utils.augmentation import AudioSegment, SpeedPerturbAugmentor, VolumePerturbAugmentor, \
+    NoisePerturbAugmentor, ReverbPerturbAugmentor, SpecAugmentor
 from macls.data_utils.featurizer import AudioFeaturizer
 
 
