@@ -1,10 +1,17 @@
 # 数据集参数
 dataset_conf:
+  aug_conf:
+    noise_aug_prob: 0.1
+    volume_aug_prob: 0.05
+  use_spec_aug: True
+  spec_aug_args:
+    freq_mask_width: [0, 6]
+    time_mask_width: [0, 6]
   dataset:
     # 过滤最短的音频长度
-    min_duration: 0.4
+    min_duration: 1
     # 最长的音频长度，大于这个长度会裁剪掉
-    max_duration: 3
+    max_duration: 4
     # 音频的采样率
     sample_rate: 16000
     # 是否对音频进行音量归一化
@@ -21,15 +28,15 @@ dataset_conf:
   # 评估的数据要特殊处理
   eval_conf:
     # 评估的批量大小
-    batch_size: 4
+    batch_size: 16
     # 最长的音频长度
-    max_duration: 20
+    max_duration: 4
   # 训练数据的数据列表路径
-  train_list: 'dataset/train_list.txt'
+  train_list: 'F:\个人文件\大学文件\开放原子RISC-V\前后端\whl\AudioClassification-Pytorch\model\train_list.txt'
   # 测试数据的数据列表路径
-  test_list: 'dataset/test_list.txt'
+  test_list: 'F:\个人文件\大学文件\开放原子RISC-V\前后端\whl\AudioClassification-Pytorch\model\test_list.txt'
   # 标签列表
-  label_list_path: 'dataset/label_list.txt'
+  label_list_path: 'F:\个人文件\大学文件\开放原子RISC-V\前后端\whl\AudioClassification-Pytorch\model\label_list.txt'
 
 # 数据预处理参数
 preprocess_conf:
@@ -38,13 +45,17 @@ preprocess_conf:
   # 音频预处理方法，也可以叫特征提取方法
   # 当use_hf_model为False时，支持：MelSpectrogram、Spectrogram、MFCC、Fbank
   # 当use_hf_model为True时，指定的是HuggingFace的模型或者本地路径，比如facebook/w2v-bert-2.0或者./feature_models/w2v-bert-2.0
-  feature_method: 'Fbank'
+  feature_method: 'MelSpectrogram'
   # 当use_hf_model为False时，设置API参数，更参数查看对应API，不清楚的可以直接删除该部分，直接使用默认值。
   # 当use_hf_model为True时，可以设置参数use_gpu，指定是否使用GPU提取特征
   method_args:
-    sample_frequency: 16000
-    num_mel_bins: 80
-
+    sample_rate: 16000
+    n_fft: 1024
+    hop_length: 320
+    n_mels: 80
+    f_min: 20
+    f_max: 8000
+    
 model_conf:
   # 所使用的模型
   model: 'ResNetSE'
@@ -55,10 +66,10 @@ model_conf:
 
 optimizer_conf:
   # 优化方法
-  optimizer: 'Adam'
+  optimizer: 'AdamW'
   # 优化方法参数
   optimizer_args:
-    lr: 0.001
+    lr: !!float 5e-4
     weight_decay: !!float 1e-5
   # 学习率衰减函数，支持Pytorch支持的和项目提供的WarmupCosineSchedulerLR
   scheduler: 'WarmupCosineSchedulerLR'
@@ -74,7 +85,7 @@ train_conf:
   # 是否使用Pytorch2.0的编译器
   use_compile: False
   # CrossEntropyLoss类的label_smoothing参数
-  label_smoothing: 0.0
+  label_smoothing: 0.02
   # 训练的轮数
-  max_epoch: 60
+  max_epoch: 30
   log_interval: 10
