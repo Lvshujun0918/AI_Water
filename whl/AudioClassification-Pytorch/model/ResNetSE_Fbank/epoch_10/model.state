@@ -1,0 +1,7 @@
+{
+    "last_epoch": 10,
+    "accuracy": 0.5625,
+    "version": "1.0.6",
+    "model": "ResNetSE",
+    "feature_method": "Fbank"
+}
