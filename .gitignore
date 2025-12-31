@@ -3,3 +3,4 @@ uploads/
 dist/
 users.db
 .sec
+log/

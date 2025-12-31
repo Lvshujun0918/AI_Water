@@ -185,14 +185,25 @@ class SpeedPerturbAugmentor:
         
         # 转换为 torch tensor
         waveform = torch.from_numpy(audio_segment.samples).unsqueeze(0)
-        
-        # 使用 torchaudio 的速度变换
-        samples_stretched = F.speed(waveform, speed_rate)
+
+        # 无 sox_effects 时，用两段重采样模拟 speed：
+        # 先把采样率拉高到 orig_sr * speed_rate，再拉回 orig_sr，长度变化约等于速度变换
+        orig_sr = audio_segment.sample_rate
+        sr_up = int(orig_sr * speed_rate)
+        # 避免 0 或相同采样率
+        sr_up = max(sr_up, 1)
+        if sr_up == orig_sr:
+            samples_stretched = waveform
+        else:
+            up = torchaudio.transforms.Resample(orig_sr, sr_up)
+            down = torchaudio.transforms.Resample(sr_up, orig_sr)
+            samples_stretched = down(up(waveform))
         
         # 转换回 numpy
         samples = samples_stretched.squeeze(0).numpy().astype(np.float32)
         
-        return AudioSegment(samples, audio_segment.sample_rate)
+        # 采样率保持不变
+        return AudioSegment(samples, orig_sr)
 
 
 class VolumePerturbAugmentor:
@@ -330,10 +341,19 @@ class ReverbPerturbAugmentor:
             rir_segment = AudioSegment.from_file(rir_file)
         except Exception:
             return audio_segment
+
+        # 确保 RIR 与目标音频采样率一致，避免卷积失真
+        if rir_segment.sample_rate != audio_segment.sample_rate:
+            rir_segment.resample(audio_segment.sample_rate)
         
         # 使用 torchaudio 进行卷积（模拟混响）
         signal = torch.from_numpy(audio_segment.samples).unsqueeze(0)
         rir = torch.from_numpy(rir_segment.samples).unsqueeze(0)
+
+        # 将 RIR 单位化，避免能量大幅放大或衰减
+        rir_power = torch.sqrt(torch.mean(rir ** 2))
+        if torch.isfinite(rir_power) and rir_power > 0:
+            rir = rir / rir_power
         
         # torchaudio 的卷积操作
         samples = F.convolve(signal, rir)
