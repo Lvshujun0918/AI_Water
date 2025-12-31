@@ -1,0 +1,7 @@
+{
+    "last_epoch": 24,
+    "accuracy": 0.6953125,
+    "version": "1.0.6",
+    "model": "ResNetSE",
+    "feature_method": "MFCC"
+}

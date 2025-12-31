@@ -1,0 +1,7 @@
+{
+    "last_epoch": 11,
+    "accuracy": 0.69921875,
+    "version": "1.0.6",
+    "model": "ResNetSE",
+    "feature_method": "MelSpectrogram"
+}
