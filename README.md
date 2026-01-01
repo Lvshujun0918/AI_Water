@@ -5,7 +5,7 @@
 本项目参加 **CIE RISC-V 大赛赛道 4**，参赛材料如下：
 1. 技术报告：[report.pdf](doc-new/AI_Water_K1_技术文档.pdf)
 2. 1. 源代码：[github.com/Lvshujun0918/AI_Water仓库](https://github.com/Lvshujun0918/AI_Water/2025nist/605c1cdfbe67c6ec350e2e3b47e3ebc6)
-   1. 模型：[初始训练模型](whl/AudioClassification-Pytorch/macls/models)、[最终使用模型](backend/py/model)
+   1. 模型：[训练脚本](whl/AudioClassification-Pytorch/train.py)、[初始训练模型](whl/AudioClassification-Pytorch/model)、[最终使用模型](backend/py/model)
    2. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
    3. README说明：本文件
 3. 作品评审PPT：[report.pptx](doc-new/AI_Water_K1_方案书.pdf)
