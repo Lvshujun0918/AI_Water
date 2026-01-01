@@ -5,7 +5,7 @@
 本项目参加由开放原子开源基金会主办的**第三届RISC-V基础软件与应用创新大赛**，对于本参赛作品，您可在以下链接中查看相关参赛递交文件：
 1. 技术报告：[report.pdf](report/report.pdf)
 2. 1. 源代码：[openatom.tech仓库](https://openatom.tech/2025nist/605c1cdfbe67c6ec350e2e3b47e3ebc6)
-   1. 模型：[初始训练模型](whl/AudioClassification-Pytorch/macls/models)、[最终使用模型](backend/py/model)
+   1. 模型：[训练脚本](whl/AudioClassification-Pytorch/train.py)、[初始训练模型](whl/AudioClassification-Pytorch/model)、[最终使用模型](backend/py/model)
    2. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
    3. README说明：本文件
 3. 作品评审PPT：[report.pptx](report/report.pptx)
