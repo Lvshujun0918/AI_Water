@@ -8,6 +8,8 @@ const fs = require('fs');
 const multer = require('multer');
 const { PythonShell } = require('python-shell');
 const chokidar = require('chokidar');
+const swaggerUi = require('swagger-ui-express');
+const openapiSpec = require('./openapi');
 const { 
   generateAccessToken, 
   generateRefreshToken, 
@@ -84,6 +86,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads')); // 提供静态文件访问
+app.get('/api-docs.json', (req, res) => {
+  res.json(openapiSpec);
+});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpec, {
+  swaggerOptions: {
+    persistAuthorization: true
+  }
+}));
 
 // 初始化 SQLite 数据库
 const db = new sqlite3.Database(path.join(__dirname, 'db/users.db'), (err) => {
