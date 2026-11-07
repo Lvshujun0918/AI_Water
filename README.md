@@ -2,15 +2,14 @@
 
 基于 Vue3 + Element Plus 构建的水务管网漏水音频识别后台管理系统，用于管理和分析上传的音频文件，及时发现漏水点，解放人类手动检测的耗时和误差。系统使用深度学习模型对音频进行分类和风险评估。
 
-本项目参加 **CIE RISC-V 大赛赛道 4**，参赛材料如下：
-1. 技术报告：[report.pdf](doc-new/AI_Water_K1_技术文档.pdf)
-2. 1. 源代码：[github.com/Lvshujun0918/AI_Water仓库](https://github.com/Lvshujun0918/AI_Water/2025nist/605c1cdfbe67c6ec350e2e3b47e3ebc6)
-   1. 模型：[训练脚本](whl/AudioClassification-Pytorch/train.py)、[初始训练模型](whl/AudioClassification-Pytorch/model)、[最终使用模型](backend/py/model)
-   2. 运行docker环境：[AMD64-Dockerfile](.Dockerfile.prod)，[RISC-V-Dockerfile](.Dockerfile.prod.riscv)，[AMD64发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water)，[RISC-V发布镜像（GHCR）](https://github.com/Lvshujun0918/AI_Water/pkgs/container/ai_water-riscv)
-   3. README说明：本文件
-3. 作品评审PPT：[report.pptx](doc-new/AI_Water_K1_方案书.pdf)
-4. 视频演示：[report.mp4](https://cl.home.cszj.wang:5208/s/oeim)，由于编码原因，在线预览可能异常，请**下载观看**。
-5. 演示程序：可访问[演示站点](https://aw.home.cszj.wang:5208/)进行体验，【lvshujun/qwerty123】
+本项目参加 **CIE 全国 RISC-V 高水平创新及应用大赛·赛道 4：基于 K1 的嵌入式终端及边缘 AI 应用开发**。
+
+参赛材料：
+1. 方案书：[doc-new/AI_Water_K1_方案书.pdf](doc-new/AI_Water_K1_方案书.pdf)
+2. 技术文档：[doc-new/AI_Water_K1_技术文档.pdf](doc-new/AI_Water_K1_技术文档.pdf)
+3. 源代码：[GitHub 仓库](https://github.com/Lvshujun0918/AI_Water)（MIT）
+4. 演示视频：待拍摄，固定机位，脚本见方案书第 4 章。
+5. 演示程序：[演示站点](https://aw.home.cszj.wang:5208/)（体验账号：lvshujun；密码：qwerty123）
 
 
 
