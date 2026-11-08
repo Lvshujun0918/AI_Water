@@ -4,3 +4,19 @@ dist/
 users.db
 .sec
 log/
+
+# LaTeX build artifacts
+doc-new/build/
+doc-new/*.aux
+doc-new/*.log
+doc-new/*.out
+doc-new/*.toc
+doc-new/*.bbl
+doc-new/*.bcf
+doc-new/*.blg
+doc-new/*.run.xml
+doc-new/*.synctex.gz
+doc-new/*.xdv
+doc-new/*.tmp.pdf
+doc-new/*.fdb_latexmk
+doc-new/*.fls
