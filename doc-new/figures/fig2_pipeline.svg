@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1140" viewBox="0 0 1200 1140">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111111"/>
+    </marker>
+    <style>
+      .title { font-family: "方正黑体简体", "Noto Serif CJK SC", serif; font-size: 28px; fill: #111111; }
+      .body { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 23px; fill: #222222; }
+      .small { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 20px; fill: #444444; }
+      .box { fill: none; stroke: #222222; stroke-width: 2; }
+      .dash { fill: none; stroke: #555555; stroke-width: 1.5; stroke-dasharray: 7 5; }
+      .arrow { stroke: #111111; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- 输入与感知 -->
+  <rect x="70" y="40" width="500" height="140" class="box"/>
+  <text x="94" y="82" class="title">麦克风阵列</text>
+  <text x="94" y="114" class="body">16 kHz 单声道，1–4 s</text>
+  <text x="94" y="146" class="small">USB Audio / 现场录音</text>
+
+  <rect x="630" y="40" width="500" height="140" class="box"/>
+  <text x="654" y="82" class="title">语音输入</text>
+  <text x="654" y="114" class="body">查询阀井 / 生成工单</text>
+  <text x="654" y="146" class="small">VAD 截断 + 降噪</text>
+
+  <rect x="70" y="240" width="500" height="150" class="box"/>
+  <text x="94" y="282" class="title">声学事件识别 AED</text>
+  <text x="94" y="314" class="body">MelSpectrogram → ResNetSE</text>
+  <text x="94" y="346" class="small">三类 softmax + 置信度</text>
+
+  <rect x="630" y="240" width="500" height="150" class="box"/>
+  <text x="654" y="282" class="title">语音识别 ASR</text>
+  <text x="654" y="314" class="body">whisper.cpp tiny/base</text>
+  <text x="654" y="346" class="small">领域词表 + 意图解析</text>
+
+  <!-- 融合 -->
+  <rect x="70" y="450" width="1060" height="180" class="box"/>
+  <text x="94" y="492" class="title">多模态证据融合</text>
+  <text x="94" y="524" class="body">时间对齐：10 s 窗口；空间对齐：设备 ID</text>
+  <text x="94" y="556" class="body">置信度加权 + 规则约束；冲突时转人工复核</text>
+  <text x="94" y="588" class="small">输出：风险等级 + 证据包</text>
+
+  <!-- 快慢路径 -->
+  <rect x="70" y="690" width="500" height="190" class="box"/>
+  <text x="94" y="732" class="title">快路径：规则引擎</text>
+  <text x="94" y="764" class="body">ASR 指令 → 意图 → 动作</text>
+  <text x="94" y="796" class="body">阈值、白名单、互锁</text>
+  <text x="94" y="828" class="small">端到端 ≤ 1 s，不调用 LLM</text>
+
+  <rect x="630" y="690" width="500" height="190" class="box"/>
+  <text x="654" y="732" class="title">慢路径：本地 LLM</text>
+  <text x="654" y="764" class="body">Qwen2.5-0.5B，Q4_K_M</text>
+  <text x="654" y="796" class="body">解释 / 工单 / 问答</text>
+  <text x="654" y="828" class="small">首 token ≤ 1.5 s，超时回退模板</text>
+
+  <!-- 输出 -->
+  <rect x="70" y="940" width="1060" height="140" class="box"/>
+  <text x="94" y="982" class="title">现场动作与记录</text>
+  <text x="94" y="1014" class="body">屏幕告警 / 蜂鸣器；继电器（人工确认后）</text>
+  <text x="94" y="1046" class="small">工单 / 碳账本条目</text>
+
+  <!-- 箭头 -->
+  <path d="M320,180 L320,240" class="arrow"/>
+  <path d="M880,180 L880,240" class="arrow"/>
+
+  <path d="M320,390 L320,420 L520,420 L520,450" class="arrow"/>
+  <path d="M880,390 L880,420 L680,420 L680,450" class="arrow"/>
+
+  <path d="M600,630 L600,660 L320,660 L320,690" class="arrow"/>
+  <path d="M600,630 L600,660 L880,660 L880,690" class="arrow"/>
+
+  <path d="M320,880 L320,940" class="arrow"/>
+  <path d="M880,880 L880,940" class="arrow"/>
+</svg>

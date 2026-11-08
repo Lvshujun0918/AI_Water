@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-04",
+  "host": "AMD64 Ryzen 7 PRO 8845HS",
+  "python": "3.11.2",
+  "torch": "2.8.0+cpu",
+  "command": "taskset -c 0-7 nice -n -10 python doc-new/scripts/bench_aed.py --threads 6 --runs 100",
+  "threads": 6,
+  "params": 9124475,
+  "checkpoint_bytes": 36786581,
+  "load_ms": 94.5,
+  "first_predict_ms": 50.4,
+  "warm_100": {
+    "p50_ms": 30.3,
+    "p95_ms": 34.9
+  },
+  "thread_scaling_100": {
+    "1": {"p50_ms": 84.8, "p95_ms": 93.8},
+    "2": {"p50_ms": 54.3, "p95_ms": 62.4},
+    "4": {"p50_ms": 37.8, "p95_ms": 42.7},
+    "6": {"p50_ms": 30.3, "p95_ms": 34.9},
+    "8": {"p50_ms": 30.1, "p95_ms": 34.7}
+  },
+  "predict_cli": {
+    "risk_level": "低风险",
+    "confidence": 0.56815
+  },
+  "riscv64_container": {
+    "command": "docker run --rm --platform linux/riscv64 riscv64/alpine:latest uname -m",
+    "result": "riscv64"
+  },
+  "audio": "4 s synthetic noise, 16 kHz mono",
+  "note": "AMD64 latency baseline for pipeline validation; not a K1 measurement and not an accuracy result."
+}

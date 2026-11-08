@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1060" viewBox="0 0 1200 1060">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111111"/>
+    </marker>
+    <style>
+      .title { font-family: "方正黑体简体", "Noto Serif CJK SC", serif; font-size: 28px; fill: #111111; }
+      .body { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 23px; fill: #222222; }
+      .small { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 20px; fill: #444444; }
+      .box { fill: none; stroke: #222222; stroke-width: 2; }
+      .arrow { stroke: #111111; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="70" y="40" width="500" height="170" class="box"/>
+  <text x="94" y="84" class="title">macls / ResNetSE</text>
+  <text x="94" y="118" class="body">backend/py/predict.py</text>
+  <text x="94" y="152" class="small">model.pth，约 9.2 M 参数</text>
+
+  <rect x="630" y="40" width="500" height="170" class="box"/>
+  <text x="654" y="84" class="title">应用容器</text>
+  <text x="654" y="118" class="body">Express + SQLite + Vue + Nginx</text>
+  <text x="654" y="152" class="small">单容器全栈</text>
+
+  <rect x="70" y="250" width="500" height="170" class="box"/>
+  <text x="94" y="294" class="title">音频前端 AudioSegment</text>
+  <text x="94" y="328" class="body">soundfile + torchaudio</text>
+  <text x="94" y="362" class="small">RMS 归一化 / 重采样</text>
+
+  <rect x="630" y="250" width="500" height="170" class="box"/>
+  <text x="654" y="294" class="title">已移除的脆弱依赖</text>
+  <text x="654" y="328" class="body">yeaudio / librosa / scipy</text>
+  <text x="654" y="362" class="small">numba 不在推理主路径</text>
+
+  <rect x="70" y="470" width="1060" height="160" class="box"/>
+  <text x="94" y="514" class="title">进迭时空 PyPI wheel 层</text>
+  <text x="94" y="548" class="body">torch 2.8.0 · torchvision 0.23.0 · torchaudio 2.8.0</text>
+  <text x="94" y="582" class="small">numba 0.62.1 · llvmlite 0.43.0</text>
+
+  <rect x="70" y="680" width="1060" height="140" class="box"/>
+  <text x="94" y="724" class="title">Bianbu Linux</text>
+  <text x="94" y="756" class="body">Python 3.12 · Node 22 · glibc / OpenMP</text>
+  <text x="94" y="788" class="small">harbor.spacemit.com/bianbu:latest</text>
+
+  <rect x="70" y="860" width="1060" height="140" class="box"/>
+  <text x="94" y="904" class="title">K1 / MUSE Pi Pro</text>
+  <text x="94" y="936" class="body">8×X60 · 2 TOPS · 8 GB LPDDR4X</text>
+  <text x="94" y="968" class="small">RVA22 + RVV 1.0（256-bit）</text>
+
+  <path d="M320,210 L320,250" class="arrow"/>
+  <path d="M880,210 L880,250" class="arrow"/>
+  <path d="M320,420 L320,470" class="arrow"/>
+  <path d="M880,420 L880,470" class="arrow"/>
+  <path d="M320,630 L320,680" class="arrow"/>
+  <path d="M880,630 L880,680" class="arrow"/>
+  <path d="M320,820 L320,860" class="arrow"/>
+  <path d="M880,820 L880,860" class="arrow"/>
+</svg>

@@ -1,0 +1,31 @@
+{
+  "device": "RISC-V QEMU rv64,v,VLEN=256",
+  "torch": "2.8.0+spacemit.0",
+  "threads": 1,
+  "runs": 3,
+  "warmup": 1,
+  "params": 9124475,
+  "checkpoint_bytes": 36786581,
+  "load_ms": 6146.6,
+  "first_predict_ms": 53936.0,
+  "warm_p50_ms": 52334.9,
+  "warm_p95_ms": 52504.9,
+  "sample_result": {
+    "risk_level": "0",
+    "confidence": 0.56815
+  },
+  "note": "QEMU user-mode emulation; synthetic audio; latency only, not K1 performance or accuracy.",
+  "emulator": {
+    "image": "riscv64/ubuntu:24.04",
+    "python": "3.12.3",
+    "qemu_cpu": "rv64,v=true,vlen=256",
+    "note": "User-mode QEMU; vector enabled; 1 thread."
+  },
+  "cli": {
+    "command": "python backend/py/predict.py /tmp/aiwater_4s.wav backend/py",
+    "risk_level": "低风险",
+    "confidence": 0.56815,
+    "wall_s": 30.253
+  },
+  "sample_result_label": "低风险"
+}

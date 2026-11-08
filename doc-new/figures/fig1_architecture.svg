@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1150" viewBox="0 0 1200 1150">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111111"/>
+    </marker>
+    <style>
+      .layer { font-family: "方正黑体简体", "Noto Serif CJK SC", serif; font-size: 28px; fill: #111111; }
+      .title { font-family: "方正黑体简体", "Noto Serif CJK SC", serif; font-size: 28px; fill: #111111; }
+      .body { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 23px; fill: #222222; }
+      .small { font-family: "方正书宋简体", "Noto Serif CJK SC", serif; font-size: 20px; fill: #444444; }
+      .box { fill: none; stroke: #222222; stroke-width: 2; }
+      .arrow { stroke: #111111; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- 交互层 -->
+  <text x="24" y="150" class="layer">交互层</text>
+  <rect x="160" y="60" width="450" height="160" class="box"/>
+  <text x="184" y="100" class="title">触摸屏 / 本地 Web</text>
+  <text x="184" y="132" class="body">告警、波形、碳账本、工单</text>
+  <text x="184" y="164" class="small">4.3 英寸 MIPI DSI</text>
+
+  <rect x="650" y="60" width="450" height="160" class="box"/>
+  <text x="674" y="100" class="title">语音交互 / 声光输出</text>
+  <text x="674" y="132" class="body">查询、自检、工单草稿</text>
+  <text x="674" y="164" class="small">规则引擎掌握执行权</text>
+
+  <!-- 服务层 -->
+  <text x="24" y="370" class="layer">服务层</text>
+  <rect x="160" y="280" width="450" height="160" class="box"/>
+  <text x="184" y="320" class="title">Express REST API</text>
+  <text x="184" y="352" class="body">上传、检索、状态、Swagger</text>
+  <text x="184" y="384" class="small">Node.js 22</text>
+
+  <rect x="650" y="280" width="450" height="160" class="box"/>
+  <text x="674" y="320" class="title">SQLite / 任务队列</text>
+  <text x="674" y="352" class="body">用户、音频、风险、账本</text>
+  <text x="674" y="384" class="small">认证、审计、WAL</text>
+
+  <!-- 智能层 -->
+  <text x="24" y="590" class="layer">智能层</text>
+  <rect x="160" y="500" width="450" height="160" class="box"/>
+  <text x="184" y="540" class="title">声学 AED / 语音 ASR</text>
+  <text x="184" y="572" class="body">ResNetSE + MelSpectrogram</text>
+  <text x="184" y="604" class="small">whisper.cpp int8</text>
+
+  <rect x="650" y="500" width="450" height="160" class="box"/>
+  <text x="674" y="540" class="title">LLM / 多模态融合</text>
+  <text x="674" y="572" class="body">Qwen2.5-0.5B + 规则引擎</text>
+  <text x="674" y="604" class="small">快路径 ≤ 1 s</text>
+
+  <!-- 运行时层 -->
+  <text x="24" y="810" class="layer">运行时层</text>
+  <rect x="160" y="720" width="450" height="160" class="box"/>
+  <text x="184" y="760" class="title">Bianbu / PyTorch</text>
+  <text x="184" y="792" class="body">Python 3.12 + torchaudio</text>
+  <text x="184" y="824" class="small">SpacemiT wheel 源</text>
+
+  <rect x="650" y="720" width="450" height="160" class="box"/>
+  <text x="674" y="760" class="title">ONNX / llama.cpp</text>
+  <text x="674" y="792" class="body">RVV 256-bit 向量路径</text>
+  <text x="674" y="824" class="small">服务交付与 CI</text>
+
+  <!-- 硬件层 -->
+  <text x="24" y="1030" class="layer">硬件层</text>
+  <rect x="160" y="940" width="450" height="160" class="box"/>
+  <text x="184" y="980" class="title">K1：8×X60，2 TOPS</text>
+  <text x="184" y="1012" class="body">8 GB LPDDR4X</text>
+  <text x="184" y="1044" class="small">RVA22 + RVV 1.0</text>
+
+  <rect x="650" y="940" width="450" height="160" class="box"/>
+  <text x="674" y="980" class="title">MUSE Pi Pro 外设</text>
+  <text x="674" y="1012" class="body">麦克风 / 摄像头 / GPIO</text>
+  <text x="674" y="1044" class="small">4G/WiFi6 / NVMe</text>
+
+  <!-- 层间箭头 -->
+  <path d="M385,220 L385,280" class="arrow"/>
+  <path d="M875,220 L875,280" class="arrow"/>
+  <path d="M385,440 L385,500" class="arrow"/>
+  <path d="M875,440 L875,500" class="arrow"/>
+  <path d="M385,660 L385,720" class="arrow"/>
+  <path d="M875,660 L875,720" class="arrow"/>
+  <path d="M385,880 L385,940" class="arrow"/>
+  <path d="M875,880 L875,940" class="arrow"/>
+</svg>
